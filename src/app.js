@@ -7,6 +7,7 @@ import dotenv from 'dotenv';
 import authRouter from './routes/auth.js';
 import dashboardRouter from './routes/dashboard.js';
 import attendanceRouter from './routes/attendance.js';
+import { migrate } from './db.js';
 
 dotenv.config();
 
@@ -17,8 +18,19 @@ const app = express();
 
 const SQLiteStore = SQLiteStoreFactory(session);
 
+app.set('trust proxy', 1);
+
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+
+app.use((req, res, next) => {
+  const start = Date.now();
+  res.on('finish', () => {
+    const ms = Date.now() - start;
+    console.log(`${req.method} ${req.originalUrl} -> ${res.statusCode} ${ms}ms`);
+  });
+  next();
+});
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -42,12 +54,28 @@ app.use('/', authRouter);
 app.use('/', dashboardRouter);
 app.use('/', attendanceRouter);
 
+app.get('/health', (req, res) => {
+  res.status(200).json({ ok: true });
+});
+
 app.get('/', (req, res) => {
   if (req.session.user) return res.redirect('/dashboard');
   return res.redirect('/login');
 });
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Attendance portal listening on http://localhost:${port}`);
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err);
+  res.status(500).send('Internal Server Error');
 });
+
+const port = process.env.PORT || 3000;
+migrate()
+  .then(() => {
+    app.listen(port, () => {
+      console.log(`Attendance portal listening on http://localhost:${port}`);
+    });
+  })
+  .catch((e) => {
+    console.error('Failed to run migrations:', e);
+    process.exit(1);
+  });
