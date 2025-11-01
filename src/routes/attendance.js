@@ -1,6 +1,7 @@
 import express from 'express';
 import { all, run } from '../db.js';
 import nodemailer from 'nodemailer';
+import twilio from 'twilio';
 
 const router = express.Router();
 
@@ -36,7 +37,7 @@ router.post('/class/:id/attendance', requireAuth, async (req, res) => {
     );
   }
 
-  const absentees = await all(`SELECT a.*, s.name as student_name, g.email as guardian_email
+  const absentees = await all(`SELECT a.*, s.name as student_name, g.email as guardian_email, g.phone as guardian_phone, g.preferred_channel as preferred_channel
     FROM attendance a
     JOIN students s ON s.id = a.student_id
     LEFT JOIN guardians g ON g.student_id = s.id
@@ -65,6 +66,24 @@ router.post('/class/:id/attendance', requireAuth, async (req, res) => {
       } catch (e) {
         await run(`INSERT INTO notification_log (attendance_id, channel, status, error, sent_at) VALUES (?,?,?,?,datetime('now'))`, [
           a.id, 'email', 'failed', String(e)
+        ]);
+      }
+    }
+  }
+
+  if (absentees.length > 0 && process.env.TWILIO_SID && process.env.TWILIO_TOKEN && process.env.TWILIO_FROM) {
+    const client = twilio(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
+    for (const a of absentees) {
+      if (!a.guardian_phone) continue;
+      try {
+        const body = `${a.student_name} was marked ABSENT on ${a.date}. If this is an error, please contact the class teacher.`;
+        const msg = await client.messages.create({ from: process.env.TWILIO_FROM, to: a.guardian_phone, body });
+        await run(`INSERT INTO notification_log (attendance_id, channel, status, provider_id, sent_at) VALUES (?,?,?,?,datetime('now'))`, [
+          a.id, 'sms', 'sent', msg.sid
+        ]);
+      } catch (e) {
+        await run(`INSERT INTO notification_log (attendance_id, channel, status, error, sent_at) VALUES (?,?,?,?,datetime('now'))`, [
+          a.id, 'sms', 'failed', String(e)
         ]);
       }
     }

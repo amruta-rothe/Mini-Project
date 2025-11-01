@@ -138,6 +138,8 @@ async function ensureDefaultTeacher(email, password) {
     teacherId = t.id;
   } else {
     teacherId = existing[0].id;
+    const hash = await bcrypt.hash(password, 10);
+    await run(`UPDATE teachers SET password_hash = ? WHERE id = ?`, [hash, teacherId]);
   }
 
   const classCount = await all(`SELECT COUNT(*) as c FROM classes WHERE teacher_id = ?`, [teacherId]);

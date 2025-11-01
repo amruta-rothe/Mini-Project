@@ -21,6 +21,10 @@
           </div>
           <div class="actions">
             <a href="/class/<%= c.id %>/attendance">Mark Attendance</a>
+            <span class="muted">|</span>
+            <a href="/reports/class/<%= c.id %>">Class Report</a>
+            <span class="muted">|</span>
+            <a href="/class/<%= c.id %>/import">Import CSV</a>
           </div>
         </li>
       <% }) %>

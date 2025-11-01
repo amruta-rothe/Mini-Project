@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/css/styles.css">
+  <title>Import CSV - <%= klass.name %></title>
+</head>
+<body>
+  <div class="topbar">
+    <a href="/dashboard">← Dashboard</a>
+    <form method="post" action="/logout"><button type="submit">Logout</button></form>
+  </div>
+  <div class="container">
+    <h1>Import Students & Guardians into <%= klass.name %></h1>
+    <% if (error) { %><div class="alert"><%= error %></div><% } %>
+
+    <p class="muted">Upload a CSV with columns: name, roll_no, guardian_name, guardian_email, guardian_phone</p>
+
+    <form method="post" action="/class/<%= klass.id %>/import" enctype="multipart/form-data">
+      <input type="file" name="csv" accept=".csv" required>
+      <button type="submit">Upload</button>
+    </form>
+
+    <details style="margin-top:16px">
+      <summary>Example CSV</summary>
+      <pre>name,roll_no,guardian_name,guardian_email,guardian_phone
+Student One,1,Parent One,parent1@example.com,+911234567891
+Student Two,2,Parent Two,parent2@example.com,+911234567892</pre>
+    </details>
+  </div>
+</body>
+</html>
