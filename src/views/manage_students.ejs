@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/css/styles.css">
+  <title>Manage Students - <%= klass.name %></title>
+  <style>
+    .rowform{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand"><%= brand %></div>
+    <a href="/dashboard" style="color:#063a4b;text-decoration:none">← Dashboard</a>
+  </div>
+  <div class="container">
+    <h1>Manage Students - <%= klass.name %> <span class="muted">Section <%= klass.section || '-' %></span></h1>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Roll</th>
+          <th>Name</th>
+          <th>Guardian Name</th>
+          <th>Guardian Email</th>
+          <th>Guardian Phone</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% students.forEach(s => { %>
+          <tr>
+            <td colspan="6">
+              <form class="rowform" method="post" action="/class/<%= klass.id %>/students/<%= s.id %>/edit">
+                <input type="text" name="roll_no" placeholder="Roll" value="<%= s.roll_no || '' %>">
+                <input type="text" name="name" placeholder="Name" value="<%= s.name %>">
+                <input type="text" name="guardian_name" placeholder="Guardian Name" value="<%= s.guardian_name || '' %>">
+                <input type="email" name="guardian_email" placeholder="Guardian Email" value="<%= s.guardian_email || '' %>">
+                <input type="text" name="guardian_phone" placeholder="Guardian Phone" value="<%= s.guardian_phone || '' %>">
+                <button type="submit">Save</button>
+              </form>
+              <form method="post" action="/class/<%= klass.id %>/students/<%= s.id %>/delete" onsubmit="return confirm('Delete this student? This cannot be undone.');" style="margin-top:6px">
+                <button class="secondary" type="submit">Delete</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

@@ -79,3 +79,51 @@ router.post('/class/:id/periods/:pid/edit', requireAuth, async (req, res) => {
 });
 
 export default router;
+ 
+// Manage students list
+router.get('/class/:id/students/manage', requireAuth, async (req, res) => {
+  const classId = parseInt(req.params.id, 10);
+  const klass = (await all(`SELECT * FROM classes WHERE id = ? AND teacher_id = ?`, [classId, req.session.user.id]))[0];
+  if (!klass) return res.status(404).send('Not found');
+  const students = await all(`
+    SELECT s.*, g.id as guardian_id, g.name as guardian_name, g.email as guardian_email, g.phone as guardian_phone
+    FROM students s
+    LEFT JOIN guardians g ON g.student_id = s.id
+    WHERE s.class_id = ?
+    ORDER BY CAST(s.roll_no AS INT)
+  `, [classId]);
+  res.render('manage_students', { klass, students });
+});
+
+router.post('/class/:id/students/:sid/edit', requireAuth, async (req, res) => {
+  const classId = parseInt(req.params.id, 10);
+  const sid = parseInt(req.params.sid, 10);
+  const klass = (await all(`SELECT * FROM classes WHERE id = ? AND teacher_id = ?`, [classId, req.session.user.id]))[0];
+  if (!klass) return res.status(404).send('Not found');
+  const { name, roll_no, guardian_name, guardian_email, guardian_phone } = req.body;
+  await run(`UPDATE students SET name = ?, roll_no = ? WHERE id = ? AND class_id = ?`, [name || null, roll_no || null, sid, classId]);
+  const existing = await all(`SELECT * FROM guardians WHERE student_id = ? LIMIT 1`, [sid]);
+  if (existing.length === 0) {
+    if (guardian_name || guardian_email || guardian_phone) {
+      await run(`INSERT INTO guardians (name, email, phone, preferred_channel, student_id) VALUES (?,?,?,?,?)`, [
+        guardian_name || null, guardian_email || null, guardian_phone || null, 'email', sid
+      ]);
+    }
+  } else {
+    await run(`UPDATE guardians SET name = ?, email = ?, phone = ? WHERE student_id = ?`, [
+      guardian_name || null, guardian_email || null, guardian_phone || null, sid
+    ]);
+  }
+  req.session.flash = { type: 'success', message: 'Student updated' };
+  res.redirect(`/class/${classId}/students/manage`);
+});
+
+router.post('/class/:id/students/:sid/delete', requireAuth, async (req, res) => {
+  const classId = parseInt(req.params.id, 10);
+  const sid = parseInt(req.params.sid, 10);
+  const klass = (await all(`SELECT * FROM classes WHERE id = ? AND teacher_id = ?`, [classId, req.session.user.id]))[0];
+  if (!klass) return res.status(404).send('Not found');
+  await run(`DELETE FROM students WHERE id = ? AND class_id = ?`, [sid, classId]);
+  req.session.flash = { type: 'success', message: 'Student deleted' };
+  res.redirect(`/class/${classId}/students/manage`);
+});
