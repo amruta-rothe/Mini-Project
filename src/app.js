@@ -11,6 +11,7 @@ import { migrate, ensureDefaultTeacher } from './db.js';
 import reportsRouter from './routes/reports.js';
 import importRouter from './routes/import.js';
 import periodsRouter from './routes/periods.js';
+import manageRouter from './routes/manage.js';
 
 dotenv.config();
 
@@ -51,6 +52,8 @@ app.use(
 app.use((req, res, next) => {
   res.locals.brand = 'Government College Of Engineering Aurangabad Chhatrapati Sambhajinagar';
   res.locals.currentUser = req.session.user || null;
+  res.locals.flash = req.session.flash || null;
+  delete req.session.flash;
   next();
 });
 
@@ -60,6 +63,7 @@ app.use('/', attendanceRouter);
 app.use('/', reportsRouter);
 app.use('/', importRouter);
 app.use('/', periodsRouter);
+app.use('/', manageRouter);
 
 app.get('/health', (req, res) => {
   res.status(200).json({ ok: true });

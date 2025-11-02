@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/css/styles.css">
+  <title>Class Period Report - <%= klass.name %></title>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand"><%= brand %></div>
+    <a href="/dashboard" style="color:#063a4b;text-decoration:none">← Dashboard</a>
+  </div>
+  <div class="container">
+    <h1>Class Period Report - <%= klass.name %> <span class="muted">Section <%= klass.section || '-' %></span></h1>
+
+    <form method="get" action="">
+      <label>Date</label>
+      <input type="date" name="date" value="<%= date %>">
+      <button type="submit">Load</button>
+      <a class="actions" href="?date=<%= encodeURIComponent(date) %>&format=csv">Export CSV</a>
+    </form>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Roll</th>
+          <th>Student</th>
+          <% periods.forEach(p => { %>
+            <th><%= p.name %></th>
+          <% }) %>
+        </tr>
+      </thead>
+      <tbody>
+        <% students.forEach(s => { %>
+          <tr>
+            <td><%= s.roll_no || '-' %></td>
+            <td><%= s.name %></td>
+            <% periods.forEach(p => { %>
+              <td><%= present.get(`${s.id}_${p.id}`) ? '✓' : '—' %></td>
+            <% }) %>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

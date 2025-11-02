@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/css/styles.css">
+  <title>Manage Periods - <%= klass.name %></title>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand"><%= brand %></div>
+    <a href="/dashboard" style="color:#063a4b;text-decoration:none">← Dashboard</a>
+  </div>
+  <div class="container">
+    <h1>Manage Periods for <%= klass.name %> <span class="muted">Section <%= klass.section || '-' %></span></h1>
+    <% if (error) { %><div class="alert"><%= error %></div><% } %>
+
+    <h3>Existing Periods</h3>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Start</th>
+          <th>End</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% periods.forEach(p => { %>
+          <tr>
+            <td><%= p.name %></td>
+            <td><%= p.start_time || '-' %></td>
+            <td><%= p.end_time || '-' %></td>
+            <td>
+              <form method="post" action="/class/<%= klass.id %>/periods/<%= p.id %>/edit" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+                <input type="text" name="name" placeholder="Name" value="<%= p.name %>">
+                <input type="time" name="start_time" value="<%= p.start_time || '' %>">
+                <input type="time" name="end_time" value="<%= p.end_time || '' %>">
+                <button type="submit">Save</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+
+    <h3>Add Period</h3>
+    <form method="post" action="/class/<%= klass.id %>/periods/add">
+      <input type="text" name="name" placeholder="Period 7" required>
+      <input type="time" name="start_time">
+      <input type="time" name="end_time">
+      <button type="submit">Add</button>
+    </form>
+  </div>
+</body>
+</html>

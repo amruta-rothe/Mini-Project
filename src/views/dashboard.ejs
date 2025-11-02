@@ -15,7 +15,19 @@
   </div>
   <div class="container">
     <h1>Your Classes</h1>
+    <% if (flash) { %>
+      <div class="alert"><%= flash.message %></div>
+    <% } %>
+    <p>
+      <a class="actions" href="/manage/class/new">+ Create Class</a>
+    </p>
     <ul class="list">
+      <% if (classes.length === 0) { %>
+        <li>
+          <div class="title">No classes yet</div>
+          <div class="actions"><a href="/manage/class/new">Create your first class</a></div>
+        </li>
+      <% } %>
       <% classes.forEach(c => { %>
         <li>
           <div>
@@ -29,6 +41,10 @@
             <a href="/reports/class/<%= c.id %>">Class Report</a>
             <span class="muted">|</span>
             <a href="/class/<%= c.id %>/import">Import CSV</a>
+            <span class="muted">|</span>
+            <a href="/class/<%= c.id %>/student/new">Add Student</a>
+            <span class="muted">|</span>
+            <a href="/class/<%= c.id %>/periods/manage">Manage Periods</a>
           </div>
         </li>
       <% }) %>
