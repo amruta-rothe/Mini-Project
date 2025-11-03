@@ -28,3 +28,7 @@ services:
       - key: TWILIO_FROM
         value: ""
     healthCheckPath: /health
+    disk:
+      name: data
+      mountPath: /opt/render/project/src/data
+      sizeGB: 1
