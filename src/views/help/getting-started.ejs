@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= pageTitle %> - AttendanceMS</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --success-color: #28a745;
+      --info-color: #17a2b8;
+      --warning-color: #ffc107;
+    }
+
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .help-header {
+      background: var(--primary-gradient);
+      color: white;
+      padding: 3rem 0 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .help-content {
+      background: white;
+      border-radius: 15px;
+      padding: 2rem;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+
+    .step-card {
+      background: #f8f9fa;
+      border-left: 4px solid #667eea;
+      border-radius: 0 10px 10px 0;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .step-number {
+      background: var(--primary-gradient);
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .screenshot-placeholder {
+      background: #e9ecef;
+      border: 2px dashed #adb5bd;
+      border-radius: 10px;
+      padding: 3rem;
+      text-align: center;
+      color: #6c757d;
+      margin: 1rem 0;
+    }
+
+    .tip-box {
+      background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+      border: 1px solid #bbdefb;
+      border-radius: 10px;
+      padding: 1rem;
+      margin: 1rem 0;
+    }
+
+    .back-nav {
+      position: fixed;
+      top: 2rem;
+      right: 2rem;
+      z-index: 1000;
+    }
+
+    .nav-pills .nav-link {
+      border-radius: 10px;
+      margin: 0.25rem 0;
+    }
+
+    .nav-pills .nav-link.active {
+      background: var(--primary-gradient);
+    }
+
+    .table-of-contents {
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      position: sticky;
+      top: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      .back-nav {
+        position: relative;
+        top: auto;
+        right: auto;
+        margin-bottom: 1rem;
+      }
+      
+      .table-of-contents {
+        position: relative;
+        top: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <div class="back-nav">
+    <a href="/help" class="btn btn-outline-primary me-2">
+      <i class="fas fa-arrow-left me-2"></i>Back to Help
+    </a>
+    <a href="/dashboard" class="btn btn-primary">
+      <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+    </a>
+  </div>
+
+  <!-- Header -->
+  <div class="help-header">
+    <div class="container">
+      <h1><i class="fas fa-rocket me-3"></i>Getting Started</h1>
+      <p class="lead">Everything you need to know to start using AttendanceMS effectively</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <!-- Table of Contents -->
+      <div class="col-lg-3">
+        <div class="table-of-contents">
+          <h5><i class="fas fa-list me-2"></i>Contents</h5>
+          <ul class="nav nav-pills flex-column">
+            <li class="nav-item">
+              <a class="nav-link" href="#overview">System Overview</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#requirements">Requirements</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#first-login">First Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#create-class">Create a Class</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#add-students">Add Students</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#mark-attendance">Mark Attendance</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#next-steps">Next Steps</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="col-lg-9">
+        <!-- System Overview -->
+        <div class="help-content" id="overview">
+          <h2><i class="fas fa-info-circle me-2"></i>What is AttendanceMS?</h2>
+          <p class="lead">AttendanceMS is a modern, web-based attendance management system designed for educational institutions.</p>
+          
+          <div class="row">
+            <div class="col-md-4">
+              <div class="text-center p-3">
+                <i class="fas fa-calendar-check fa-3x text-primary mb-3"></i>
+                <h5>Attendance Tracking</h5>
+                <p>Mark and track student attendance with ease</p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="text-center p-3">
+                <i class="fas fa-chart-bar fa-3x text-success mb-3"></i>
+                <h5>Reports & Analytics</h5>
+                <p>Generate detailed reports and insights</p>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="text-center p-3">
+                <i class="fas fa-bell fa-3x text-warning mb-3"></i>
+                <h5>Parent Notifications</h5>
+                <p>Automated email and SMS notifications</p>
+              </div>
+            </div>
+          </div>
+
+          <h4>Who Can Use AttendanceMS?</h4>
+          <ul>
+            <li><strong>Teachers:</strong> Mark attendance, manage classes, generate reports</li>
+            <li><strong>Administrators:</strong> Manage teachers, view analytics, system settings</li>
+            <li><strong>Parents:</strong> Receive notifications, view attendance reports</li>
+          </ul>
+        </div>
+
+        <!-- Requirements -->
+        <div class="help-content" id="requirements">
+          <h2><i class="fas fa-desktop me-2"></i>System Requirements</h2>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <h4>Supported Browsers</h4>
+              <ul>
+                <li><i class="fab fa-chrome text-warning me-2"></i>Google Chrome (Recommended)</li>
+                <li><i class="fab fa-firefox text-danger me-2"></i>Mozilla Firefox</li>
+                <li><i class="fab fa-safari text-info me-2"></i>Safari</li>
+                <li><i class="fab fa-edge text-primary me-2"></i>Microsoft Edge</li>
+              </ul>
+            </div>
+            <div class="col-md-6">
+              <h4>Device Compatibility</h4>
+              <ul>
+                <li><i class="fas fa-desktop text-primary me-2"></i>Desktop Computers</li>
+                <li><i class="fas fa-laptop text-success me-2"></i>Laptops</li>
+                <li><i class="fas fa-tablet text-info me-2"></i>Tablets</li>
+                <li><i class="fas fa-mobile text-warning me-2"></i>Smartphones</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="tip-box">
+            <i class="fas fa-lightbulb text-warning me-2"></i>
+            <strong>Tip:</strong> For the best experience, use Google Chrome on a desktop or laptop computer.
+          </div>
+        </div>
+
+        <!-- First Login -->
+        <div class="help-content" id="first-login">
+          <h2><i class="fas fa-sign-in-alt me-2"></i>Your First Login</h2>
+          
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <h4>Navigate to the Login Page</h4>
+            <p>Open your web browser and go to the AttendanceMS login page.</p>
+            <div class="screenshot-placeholder">
+              <i class="fas fa-image fa-3x mb-3"></i>
+              <p>Screenshot: Login page with email and password fields</p>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <h4>Enter Your Credentials</h4>
+            <p>Enter the email address and password provided by your administrator.</p>
+            <ul>
+              <li>Email: Your institutional email address</li>
+              <li>Password: Temporary password (you'll be asked to change it)</li>
+            </ul>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <h4>Complete Your Profile</h4>
+            <p>On first login, you may be asked to complete your profile information:</p>
+            <ul>
+              <li>Full name</li>
+              <li>Phone number</li>
+              <li>Department</li>
+              <li>Profile photo (optional)</li>
+            </ul>
+          </div>
+
+          <div class="tip-box">
+            <i class="fas fa-shield-alt text-success me-2"></i>
+            <strong>Security Tip:</strong> Change your password immediately after first login for better security.
+          </div>
+        </div>
+
+        <!-- Create Class -->
+        <div class="help-content" id="create-class">
+          <h2><i class="fas fa-plus-circle me-2"></i>Creating Your First Class</h2>
+          
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <h4>Access Class Management</h4>
+            <p>From the dashboard, click on "Manage Classes" or "Create Class" button.</p>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <h4>Fill Class Details</h4>
+            <p>Enter the following information:</p>
+            <ul>
+              <li><strong>Class Name:</strong> e.g., "Grade 10A", "Mathematics 101"</li>
+              <li><strong>Section:</strong> e.g., "A", "B", "Morning"</li>
+              <li><strong>Academic Year:</strong> e.g., "2024-2025"</li>
+              <li><strong>Description:</strong> Optional details about the class</li>
+            </ul>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <h4>Set Up Periods (Optional)</h4>
+            <p>Configure class periods if you track attendance by periods:</p>
+            <ul>
+              <li>Period 1: 9:00 AM - 9:45 AM</li>
+              <li>Period 2: 9:50 AM - 10:35 AM</li>
+              <li>And so on...</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Add Students -->
+        <div class="help-content" id="add-students">
+          <h2><i class="fas fa-user-plus me-2"></i>Adding Students</h2>
+          
+          <p>There are two ways to add students to your class:</p>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="step-card">
+                <h4><i class="fas fa-plus me-2"></i>Manual Entry</h4>
+                <ol>
+                  <li>Go to your class page</li>
+                  <li>Click "Add Student"</li>
+                  <li>Enter student details:
+                    <ul>
+                      <li>Full name</li>
+                      <li>Roll number</li>
+                      <li>Parent email (optional)</li>
+                      <li>Parent phone (optional)</li>
+                    </ul>
+                  </li>
+                  <li>Click "Save"</li>
+                </ol>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="step-card">
+                <h4><i class="fas fa-upload me-2"></i>CSV Import</h4>
+                <ol>
+                  <li>Prepare a CSV file with columns:
+                    <ul>
+                      <li>name</li>
+                      <li>roll_no</li>
+                      <li>parent_email</li>
+                      <li>parent_phone</li>
+                    </ul>
+                  </li>
+                  <li>Click "Import Students"</li>
+                  <li>Select your CSV file</li>
+                  <li>Review and confirm import</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+
+          <div class="tip-box">
+            <i class="fas fa-download text-info me-2"></i>
+            <strong>Tip:</strong> Download the CSV template from the import page to ensure correct formatting.
+          </div>
+        </div>
+
+        <!-- Mark Attendance -->
+        <div class="help-content" id="mark-attendance">
+          <h2><i class="fas fa-check-circle me-2"></i>Marking Attendance</h2>
+          
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <h4>Navigate to Attendance</h4>
+            <p>From the dashboard, click "Daily Attendance" or select your class and click "Mark Attendance".</p>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <h4>Select Date and Period</h4>
+            <ul>
+              <li>Choose the date (defaults to today)</li>
+              <li>Select the period (if using period-based attendance)</li>
+              <li>Confirm the correct class is selected</li>
+            </ul>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <h4>Mark Student Attendance</h4>
+            <p>For each student, select their attendance status:</p>
+            <ul>
+              <li><span class="badge bg-success">Present</span> - Student is in class</li>
+              <li><span class="badge bg-danger">Absent</span> - Student is not in class</li>
+              <li><span class="badge bg-warning">Late</span> - Student arrived late</li>
+              <li><span class="badge bg-info">Excused</span> - Authorized absence</li>
+            </ul>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">4</div>
+            <h4>Save and Send Notifications</h4>
+            <p>After marking attendance:</p>
+            <ul>
+              <li>Click "Save Attendance"</li>
+              <li>Optionally send notifications to parents</li>
+              <li>Review the attendance summary</li>
+            </ul>
+          </div>
+
+          <div class="tip-box">
+            <i class="fas fa-clock text-warning me-2"></i>
+            <strong>Quick Tip:</strong> Use "Mark All Present" button and then change individual students who are absent - it's faster!
+          </div>
+        </div>
+
+        <!-- Next Steps -->
+        <div class="help-content" id="next-steps">
+          <h2><i class="fas fa-forward me-2"></i>What's Next?</h2>
+          
+          <p>Now that you've learned the basics, explore these advanced features:</p>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="card border-0 shadow-sm mb-3">
+                <div class="card-body">
+                  <h5><i class="fas fa-chart-bar text-primary me-2"></i>Generate Reports</h5>
+                  <p>Create detailed attendance reports for analysis and sharing.</p>
+                  <a href="/help/how-to#generate-reports" class="btn btn-outline-primary btn-sm">Learn How</a>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="card border-0 shadow-sm mb-3">
+                <div class="card-body">
+                  <h5><i class="fas fa-bell text-warning me-2"></i>Set Up Notifications</h5>
+                  <p>Configure email and SMS notifications for parents.</p>
+                  <a href="/help/how-to#notifications" class="btn btn-outline-warning btn-sm">Learn How</a>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="card border-0 shadow-sm mb-3">
+                <div class="card-body">
+                  <h5><i class="fas fa-users text-success me-2"></i>Manage Multiple Classes</h5>
+                  <p>Learn to efficiently handle multiple classes and subjects.</p>
+                  <a href="/help/how-to#multiple-classes" class="btn btn-outline-success btn-sm">Learn How</a>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="card border-0 shadow-sm mb-3">
+                <div class="card-body">
+                  <h5><i class="fas fa-cog text-info me-2"></i>Customize Settings</h5>
+                  <p>Personalize your AttendanceMS experience.</p>
+                  <a href="/help/how-to#settings" class="btn btn-outline-info btn-sm">Learn How</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert alert-info">
+            <i class="fas fa-question-circle me-2"></i>
+            <strong>Need Help?</strong> If you have questions or run into issues, check our 
+            <a href="/help/faq">FAQ section</a> or <a href="/help/contact">contact support</a>.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    // Update active navigation item on scroll
+    window.addEventListener('scroll', function() {
+      const sections = document.querySelectorAll('.help-content[id]');
+      const navLinks = document.querySelectorAll('.nav-pills .nav-link');
+      
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop - 100;
+        if (window.pageYOffset >= sectionTop) {
+          current = section.getAttribute('id');
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + current) {
+          link.classList.add('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

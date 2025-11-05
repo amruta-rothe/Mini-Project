@@ -119,6 +119,45 @@ router.post('/class/:id/daily-attendance', requireAuth, async (req, res) => {
       `, [today, classId, parseInt(studentId), status, note]);
     }
 
+    // Emit real-time update via WebSocket
+    const io = req.app.get('io');
+    if (io) {
+      io.to(`class-${classId}`).emit('attendance-updated', {
+        classId,
+        date: today,
+        updatedBy: teacherId,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+    // Send automatic absence notifications if enabled
+    try {
+      const settings = await all(`
+        SELECT absence_alerts, email_enabled, sms_enabled 
+        FROM notification_settings 
+        WHERE teacher_id = ?
+      `, [teacherId]);
+      
+      if (settings.length > 0 && settings[0].absence_alerts && 
+          (settings[0].email_enabled || settings[0].sms_enabled)) {
+        
+        // Import notification functions
+        const { sendAbsenceNotifications } = await import('./notifications.js');
+        
+        // Send notifications in background (don't wait)
+        setImmediate(async () => {
+          try {
+            await sendAbsenceNotifications(classId, today, teacherId);
+            console.log(`Absence notifications sent for class ${classId} on ${today}`);
+          } catch (error) {
+            console.error('Error sending automatic absence notifications:', error);
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Error checking notification settings:', error);
+    }
+
     // Send immediate notifications for absent students
     await sendAbsentNotifications(classId, today);
 

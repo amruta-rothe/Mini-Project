@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= pageTitle %> - AttendanceMS</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root { --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    body { background-color: #f8f9fa; font-family: 'Inter', sans-serif; }
+    .help-header { background: var(--primary-gradient); color: white; padding: 3rem 0 2rem; margin-bottom: 2rem; }
+    .video-card { background: white; border-radius: 15px; padding: 1.5rem; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; transition: all 0.3s ease; }
+    .video-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
+    .video-placeholder { background: #e9ecef; border: 2px dashed #adb5bd; border-radius: 10px; padding: 4rem 2rem; text-align: center; color: #6c757d; }
+    .back-nav { position: fixed; top: 2rem; right: 2rem; z-index: 1000; }
+    @media (max-width: 768px) { .back-nav { position: relative; top: auto; right: auto; margin-bottom: 1rem; } }
+  </style>
+</head>
+<body>
+  <div class="back-nav">
+    <a href="/help" class="btn btn-outline-primary me-2"><i class="fas fa-arrow-left me-2"></i>Back to Help</a>
+    <a href="/dashboard" class="btn btn-primary"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a>
+  </div>
+
+  <div class="help-header">
+    <div class="container">
+      <h1><i class="fas fa-play-circle me-3"></i>Video Tutorials</h1>
+      <p class="lead">Learn AttendanceMS with these quick video guides</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6 mb-4">
+        <div class="video-card">
+          <div class="video-placeholder">
+            <i class="fas fa-play-circle fa-4x mb-3"></i>
+            <h5>Getting Started with AttendanceMS</h5>
+            <p>Learn the basics in 3 minutes</p>
+            <button class="btn btn-primary">
+              <i class="fas fa-play me-2"></i>Watch Tutorial
+            </button>
+          </div>
+          <div class="mt-3">
+            <h6>What you'll learn:</h6>
+            <ul class="small">
+              <li>How to log in and navigate</li>
+              <li>Creating your first class</li>
+              <li>Adding students</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6 mb-4">
+        <div class="video-card">
+          <div class="video-placeholder">
+            <i class="fas fa-play-circle fa-4x mb-3"></i>
+            <h5>Marking Attendance in 3 Clicks</h5>
+            <p>Quick attendance marking tutorial</p>
+            <button class="btn btn-primary">
+              <i class="fas fa-play me-2"></i>Watch Tutorial
+            </button>
+          </div>
+          <div class="mt-3">
+            <h6>What you'll learn:</h6>
+            <ul class="small">
+              <li>Fast attendance marking techniques</li>
+              <li>Using bulk actions</li>
+              <li>Handling late arrivals</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6 mb-4">
+        <div class="video-card">
+          <div class="video-placeholder">
+            <i class="fas fa-play-circle fa-4x mb-3"></i>
+            <h5>Generating Reports & Analytics</h5>
+            <p>Create powerful attendance reports</p>
+            <button class="btn btn-primary">
+              <i class="fas fa-play me-2"></i>Watch Tutorial
+            </button>
+          </div>
+          <div class="mt-3">
+            <h6>What you'll learn:</h6>
+            <ul class="small">
+              <li>Creating different report types</li>
+              <li>Exporting to PDF/Excel</li>
+              <li>Understanding analytics</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6 mb-4">
+        <div class="video-card">
+          <div class="video-placeholder">
+            <i class="fas fa-play-circle fa-4x mb-3"></i>
+            <h5>Setting Up Parent Notifications</h5>
+            <p>Automated parent communication</p>
+            <button class="btn btn-primary">
+              <i class="fas fa-play me-2"></i>Watch Tutorial
+            </button>
+          </div>
+          <div class="mt-3">
+            <h6>What you'll learn:</h6>
+            <ul class="small">
+              <li>Configuring email notifications</li>
+              <li>Setting up SMS alerts</li>
+              <li>Customizing message templates</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert alert-info">
+      <h5><i class="fas fa-lightbulb me-2"></i>Pro Tips</h5>
+      <ul>
+        <li>Watch videos at 1.25x speed to learn faster</li>
+        <li>Pause and follow along in a separate tab</li>
+        <li>Bookmark this page for quick reference</li>
+        <li>Share these tutorials with your colleagues</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

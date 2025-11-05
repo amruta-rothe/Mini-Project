@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= pageTitle %> - AttendanceMS</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root { --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    body { background-color: #f8f9fa; font-family: 'Inter', sans-serif; }
+    .help-header { background: var(--primary-gradient); color: white; padding: 3rem 0 2rem; margin-bottom: 2rem; }
+    .trouble-card { background: white; border-radius: 15px; padding: 2rem; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; border-left: 4px solid #dc3545; }
+    .solution-box { background: #d4edda; border: 1px solid #c3e6cb; border-radius: 10px; padding: 1rem; margin: 1rem 0; }
+    .back-nav { position: fixed; top: 2rem; right: 2rem; z-index: 1000; }
+    @media (max-width: 768px) { .back-nav { position: relative; top: auto; right: auto; margin-bottom: 1rem; } }
+  </style>
+</head>
+<body>
+  <div class="back-nav">
+    <a href="/help" class="btn btn-outline-primary me-2"><i class="fas fa-arrow-left me-2"></i>Back to Help</a>
+    <a href="/dashboard" class="btn btn-primary"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a>
+  </div>
+
+  <div class="help-header">
+    <div class="container">
+      <h1><i class="fas fa-tools me-3"></i>Troubleshooting</h1>
+      <p class="lead">Solutions to common problems and errors</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="trouble-card" id="login-issues">
+      <h3><i class="fas fa-exclamation-triangle text-danger me-2"></i>Can't Log In</h3>
+      <p><strong>Problem:</strong> Unable to access your account or getting "Invalid credentials" error</p>
+      <div class="solution-box">
+        <h5><i class="fas fa-check-circle text-success me-2"></i>Solutions:</h5>
+        <ul>
+          <li>Double-check your email address and password</li>
+          <li>Ensure Caps Lock is off</li>
+          <li>Clear browser cache and cookies</li>
+          <li>Try a different browser</li>
+          <li>Reset your password using "Forgot Password" link</li>
+          <li>Contact your administrator if account is locked</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="trouble-card">
+      <h3><i class="fas fa-exclamation-triangle text-danger me-2"></i>CSV Import Errors</h3>
+      <p><strong>Problem:</strong> Getting errors when importing student data from CSV</p>
+      <div class="solution-box">
+        <h5><i class="fas fa-check-circle text-success me-2"></i>Solutions:</h5>
+        <ul>
+          <li>Download and use the official CSV template</li>
+          <li>Ensure all required columns are present: name, roll_no</li>
+          <li>Remove special characters from student names</li>
+          <li>Save CSV in UTF-8 encoding</li>
+          <li>Check for duplicate roll numbers</li>
+          <li>Ensure file size is under 5MB</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="trouble-card">
+      <h3><i class="fas fa-exclamation-triangle text-danger me-2"></i>Attendance Not Saving</h3>
+      <p><strong>Problem:</strong> Attendance data disappears or doesn't save properly</p>
+      <div class="solution-box">
+        <h5><i class="fas fa-check-circle text-success me-2"></i>Solutions:</h5>
+        <ul>
+          <li>Check your internet connection</li>
+          <li>Don't navigate away before clicking "Save"</li>
+          <li>Refresh the page and try again</li>
+          <li>Clear browser cache</li>
+          <li>Try using a different browser</li>
+          <li>Contact support if problem persists</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="trouble-card">
+      <h3><i class="fas fa-exclamation-triangle text-danger me-2"></i>Email Notifications Not Sent</h3>
+      <p><strong>Problem:</strong> Parents not receiving attendance notifications</p>
+      <div class="solution-box">
+        <h5><i class="fas fa-check-circle text-success me-2"></i>Solutions:</h5>
+        <ul>
+          <li>Verify parent email addresses are correct</li>
+          <li>Check if emails are in spam/junk folder</li>
+          <li>Ensure notification settings are enabled</li>
+          <li>Contact administrator to check email configuration</li>
+          <li>Try sending a test notification</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="trouble-card">
+      <h3><i class="fas fa-exclamation-triangle text-danger me-2"></i>Page Loading Slowly</h3>
+      <p><strong>Problem:</strong> AttendanceMS is running slowly or pages take long to load</p>
+      <div class="solution-box">
+        <h5><i class="fas fa-check-circle text-success me-2"></i>Solutions:</h5>
+        <ul>
+          <li>Check your internet connection speed</li>
+          <li>Close unnecessary browser tabs</li>
+          <li>Clear browser cache and cookies</li>
+          <li>Disable browser extensions temporarily</li>
+          <li>Use Google Chrome for best performance</li>
+          <li>Restart your browser</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="alert alert-info">
+      <h5><i class="fas fa-info-circle me-2"></i>Still Having Issues?</h5>
+      <p>If these solutions don't help, please <a href="/help/contact">contact our support team</a> with:</p>
+      <ul>
+        <li>Description of the problem</li>
+        <li>Steps you've already tried</li>
+        <li>Browser and device information</li>
+        <li>Screenshots if applicable</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

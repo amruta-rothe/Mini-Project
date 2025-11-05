@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= pageTitle %> - AttendanceMS</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root { --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    body { background-color: #f8f9fa; font-family: 'Inter', sans-serif; }
+    .help-header { background: var(--primary-gradient); color: white; padding: 3rem 0 2rem; margin-bottom: 2rem; }
+    .role-card { background: white; border-radius: 15px; padding: 2rem; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .permissions-table { background: white; border-radius: 15px; padding: 2rem; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+    .back-nav { position: fixed; top: 2rem; right: 2rem; z-index: 1000; }
+    @media (max-width: 768px) { .back-nav { position: relative; top: auto; right: auto; margin-bottom: 1rem; } }
+  </style>
+</head>
+<body>
+  <div class="back-nav">
+    <a href="/help" class="btn btn-outline-primary me-2"><i class="fas fa-arrow-left me-2"></i>Back to Help</a>
+    <a href="/dashboard" class="btn btn-primary"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a>
+  </div>
+
+  <div class="help-header">
+    <div class="container">
+      <h1><i class="fas fa-users me-3"></i>User Roles & Access</h1>
+      <p class="lead">Understanding different user roles and their permissions</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-4 mb-4">
+        <div class="role-card">
+          <div class="text-center mb-3">
+            <i class="fas fa-chalkboard-teacher fa-3x text-primary mb-3"></i>
+            <h3>Teacher</h3>
+          </div>
+          <h5>What Teachers Can Do:</h5>
+          <ul>
+            <li>Create and manage their classes</li>
+            <li>Add and remove students</li>
+            <li>Mark daily attendance</li>
+            <li>Generate attendance reports</li>
+            <li>Send notifications to parents</li>
+            <li>View attendance analytics</li>
+            <li>Import students via CSV</li>
+            <li>Edit their profile</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="col-lg-4 mb-4">
+        <div class="role-card">
+          <div class="text-center mb-3">
+            <i class="fas fa-user-tie fa-3x text-success mb-3"></i>
+            <h3>Administrator</h3>
+          </div>
+          <h5>What Admins Can Do:</h5>
+          <ul>
+            <li>All teacher permissions</li>
+            <li>Manage teacher accounts</li>
+            <li>View school-wide analytics</li>
+            <li>Access all classes and data</li>
+            <li>Configure system settings</li>
+            <li>Manage email/SMS settings</li>
+            <li>Export bulk data</li>
+            <li>View audit logs</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="col-lg-4 mb-4">
+        <div class="role-card">
+          <div class="text-center mb-3">
+            <i class="fas fa-user-friends fa-3x text-warning mb-3"></i>
+            <h3>Parent/Student</h3>
+          </div>
+          <h5>What Parents Can Access:</h5>
+          <ul>
+            <li>Receive attendance notifications</li>
+            <li>View attendance reports</li>
+            <li>Access student attendance history</li>
+            <li>Update contact information</li>
+            <li>View attendance summaries</li>
+            <li>Download attendance certificates</li>
+          </ul>
+          <p class="text-muted"><small>Note: Parent access is view-only</small></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="permissions-table">
+      <h3 class="mb-4"><i class="fas fa-table me-2"></i>Permissions Matrix</h3>
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead class="table-dark">
+            <tr>
+              <th>Feature</th>
+              <th class="text-center">Teacher</th>
+              <th class="text-center">Admin</th>
+              <th class="text-center">Parent</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Mark Attendance</td>
+              <td class="text-center"><i class="fas fa-check text-success"></i></td>
+              <td class="text-center"><i class="fas fa-check text-success"></i></td>
+              <td class="text-center"><i class="fas fa-times text-danger"></i></td>
+            </tr>
+            <tr>
+              <td>View Attendance Reports</td>
+              <td class="text-center"><i class="fas fa-check text-success"></i></td>
+              <td class="text-center"><i class="fas fa-check text-success"></i></td>
+              <td class="text-center"><i class="fas fa-check text-success"></i></td>
+            </tr>
+            <tr>
+              <td>Manage Students</td>
+              <td class="text-center"><i class="fas fa-check text-success"></i></td>
+              <td class="text-center"><i class="fas fa-check text-success"></i></td>
+              <td class="text-center"><i class="fas fa-times text-danger"></i></td>
+            </tr>
+            <tr>
+              <td>Create Classes</td>
+              <td class="text-center"><i class="fas fa-check text-success"></i></td>
+              <td class="text-center"><i class="fas fa-check text-success"></i></td>
+              <td class="text-center"><i class="fas fa-times text-danger"></i></td>
+            </tr>
+            <tr>
+              <td>Send Notifications</td>
+              <td class="text-center"><i class="fas fa-check text-success"></i></td>
+              <td class="text-center"><i class="fas fa-check text-success"></i></td>
+              <td class="text-center"><i class="fas fa-times text-danger"></i></td>
+            </tr>
+            <tr>
+              <td>Manage Teachers</td>
+              <td class="text-center"><i class="fas fa-times text-danger"></i></td>
+              <td class="text-center"><i class="fas fa-check text-success"></i></td>
+              <td class="text-center"><i class="fas fa-times text-danger"></i></td>
+            </tr>
+            <tr>
+              <td>System Settings</td>
+              <td class="text-center"><i class="fas fa-times text-danger"></i></td>
+              <td class="text-center"><i class="fas fa-check text-success"></i></td>
+              <td class="text-center"><i class="fas fa-times text-danger"></i></td>
+            </tr>
+            <tr>
+              <td>View All Data</td>
+              <td class="text-center"><i class="fas fa-times text-danger"></i></td>
+              <td class="text-center"><i class="fas fa-check text-success"></i></td>
+              <td class="text-center"><i class="fas fa-times text-danger"></i></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

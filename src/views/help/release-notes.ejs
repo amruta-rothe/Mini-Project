@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= pageTitle %> - AttendanceMS</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root { --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    body { background-color: #f8f9fa; font-family: 'Inter', sans-serif; }
+    .help-header { background: var(--primary-gradient); color: white; padding: 3rem 0 2rem; margin-bottom: 2rem; }
+    .release-card { background: white; border-radius: 15px; padding: 2rem; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; border-left: 4px solid #28a745; }
+    .version-badge { background: var(--primary-gradient); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.875rem; font-weight: 600; }
+    .back-nav { position: fixed; top: 2rem; right: 2rem; z-index: 1000; }
+    @media (max-width: 768px) { .back-nav { position: relative; top: auto; right: auto; margin-bottom: 1rem; } }
+  </style>
+</head>
+<body>
+  <div class="back-nav">
+    <a href="/help" class="btn btn-outline-primary me-2"><i class="fas fa-arrow-left me-2"></i>Back to Help</a>
+    <a href="/dashboard" class="btn btn-primary"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a>
+  </div>
+
+  <div class="help-header">
+    <div class="container">
+      <h1><i class="fas fa-code-branch me-3"></i>Release Notes</h1>
+      <p class="lead">Latest updates and improvements to AttendanceMS</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="release-card">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3><span class="version-badge">v2.1.0</span> Enhanced Registration System</h3>
+        <small class="text-muted">November 2024</small>
+      </div>
+      <h5><i class="fas fa-plus text-success me-2"></i>New Features:</h5>
+      <ul>
+        <li>Multi-step registration with complete profile collection</li>
+        <li>Email verification system for new accounts</li>
+        <li>Profile photo upload during registration</li>
+        <li>Enhanced form validation and user experience</li>
+      </ul>
+      <h5><i class="fas fa-wrench text-primary me-2"></i>Improvements:</h5>
+      <ul>
+        <li>Redesigned login and home pages with modern UI</li>
+        <li>Better mobile responsiveness</li>
+        <li>Improved security with stronger password requirements</li>
+      </ul>
+    </div>
+
+    <div class="release-card">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3><span class="version-badge">v2.0.0</span> Comprehensive Help System</h3>
+        <small class="text-muted">November 2024</small>
+      </div>
+      <h5><i class="fas fa-plus text-success me-2"></i>New Features:</h5>
+      <ul>
+        <li>Complete help center with 10+ help pages</li>
+        <li>Interactive FAQ system with search</li>
+        <li>Step-by-step how-to guides</li>
+        <li>Video tutorials section</li>
+        <li>Troubleshooting guides</li>
+        <li>Contact support system</li>
+      </ul>
+    </div>
+
+    <div class="release-card">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3><span class="version-badge">v1.8.0</span> Real-time Notifications</h3>
+        <small class="text-muted">October 2024</small>
+      </div>
+      <h5><i class="fas fa-plus text-success me-2"></i>New Features:</h5>
+      <ul>
+        <li>Real-time attendance notifications</li>
+        <li>Automated parent email reports</li>
+        <li>SMS notification system</li>
+        <li>Notification scheduling and templates</li>
+      </ul>
+    </div>
+
+    <div class="release-card">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3><span class="version-badge">v1.7.0</span> Advanced Analytics</h3>
+        <small class="text-muted">September 2024</small>
+      </div>
+      <h5><i class="fas fa-plus text-success me-2"></i>New Features:</h5>
+      <ul>
+        <li>Interactive attendance analytics dashboard</li>
+        <li>Attendance trend charts and graphs</li>
+        <li>Class performance insights</li>
+        <li>Export analytics to PDF/Excel</li>
+      </ul>
+    </div>
+
+    <div class="release-card">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3><span class="version-badge">v1.6.0</span> Bulk Operations</h3>
+        <small class="text-muted">August 2024</small>
+      </div>
+      <h5><i class="fas fa-plus text-success me-2"></i>New Features:</h5>
+      <ul>
+        <li>CSV import for student data</li>
+        <li>Bulk attendance marking</li>
+        <li>Mass email notifications</li>
+        <li>Batch report generation</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

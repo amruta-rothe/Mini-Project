@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= pageTitle %> - AttendanceMS</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .help-header {
+      background: var(--primary-gradient);
+      color: white;
+      padding: 3rem 0 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .faq-section {
+      background: white;
+      border-radius: 15px;
+      padding: 2rem;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+
+    .accordion-button {
+      background: #f8f9fa;
+      border: none;
+      font-weight: 600;
+      padding: 1.5rem;
+    }
+
+    .accordion-button:not(.collapsed) {
+      background: var(--primary-gradient);
+      color: white;
+    }
+
+    .accordion-button:focus {
+      box-shadow: none;
+      border: none;
+    }
+
+    .accordion-item {
+      border: 1px solid #e9ecef;
+      border-radius: 10px !important;
+      margin-bottom: 1rem;
+    }
+
+    .accordion-body {
+      padding: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .search-faq {
+      background: white;
+      border-radius: 15px;
+      padding: 2rem;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+
+    .category-tabs .nav-link {
+      border-radius: 10px;
+      margin-right: 0.5rem;
+      font-weight: 600;
+    }
+
+    .category-tabs .nav-link.active {
+      background: var(--primary-gradient);
+      border-color: transparent;
+    }
+
+    .back-nav {
+      position: fixed;
+      top: 2rem;
+      right: 2rem;
+      z-index: 1000;
+    }
+
+    @media (max-width: 768px) {
+      .back-nav {
+        position: relative;
+        top: auto;
+        right: auto;
+        margin-bottom: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <div class="back-nav">
+    <a href="/help" class="btn btn-outline-primary me-2">
+      <i class="fas fa-arrow-left me-2"></i>Back to Help
+    </a>
+    <a href="/dashboard" class="btn btn-primary">
+      <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+    </a>
+  </div>
+
+  <!-- Header -->
+  <div class="help-header">
+    <div class="container">
+      <h1><i class="fas fa-question-circle me-3"></i>Frequently Asked Questions</h1>
+      <p class="lead">Find quick answers to common questions about AttendanceMS</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Search -->
+    <div class="search-faq">
+      <div class="input-group">
+        <span class="input-group-text bg-transparent border-0">
+          <i class="fas fa-search text-muted"></i>
+        </span>
+        <input type="text" class="form-control border-0" placeholder="Search FAQs..." id="faqSearch">
+      </div>
+    </div>
+
+    <!-- Category Tabs -->
+    <ul class="nav nav-tabs category-tabs mb-4" id="categoryTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button">
+          <i class="fas fa-info-circle me-2"></i>General
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="attendance-tab" data-bs-toggle="tab" data-bs-target="#attendance" type="button">
+          <i class="fas fa-calendar-check me-2"></i>Attendance
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="technical-tab" data-bs-toggle="tab" data-bs-target="#technical" type="button">
+          <i class="fas fa-cog me-2"></i>Technical
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="account-tab" data-bs-toggle="tab" data-bs-target="#account" type="button">
+          <i class="fas fa-user me-2"></i>Account
+        </button>
+      </li>
+    </ul>
+
+    <!-- FAQ Content -->
+    <div class="tab-content" id="categoryTabsContent">
+      <!-- General FAQs -->
+      <div class="tab-pane fade show active" id="general" role="tabpanel">
+        <div class="faq-section">
+          <div class="accordion" id="generalAccordion">
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#general1">
+                  What is AttendanceMS and how does it work?
+                </button>
+              </h2>
+              <div id="general1" class="accordion-collapse collapse show" data-bs-parent="#generalAccordion">
+                <div class="accordion-body">
+                  AttendanceMS is a web-based attendance management system designed for educational institutions. It allows teachers to:
+                  <ul>
+                    <li>Mark student attendance quickly and efficiently</li>
+                    <li>Generate detailed attendance reports</li>
+                    <li>Send automated notifications to parents</li>
+                    <li>Track attendance patterns and analytics</li>
+                  </ul>
+                  The system works entirely through your web browser - no software installation required.
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#general2">
+                  Who can use AttendanceMS?
+                </button>
+              </h2>
+              <div id="general2" class="accordion-collapse collapse" data-bs-parent="#generalAccordion">
+                <div class="accordion-body">
+                  AttendanceMS is designed for:
+                  <ul>
+                    <li><strong>Teachers:</strong> Mark attendance, manage classes, generate reports</li>
+                    <li><strong>School Administrators:</strong> Manage teachers, view school-wide analytics</li>
+                    <li><strong>Parents:</strong> Receive attendance notifications and view reports</li>
+                  </ul>
+                  Each user type has different permissions and access levels within the system.
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#general3">
+                  Is my data secure in AttendanceMS?
+                </button>
+              </h2>
+              <div id="general3" class="accordion-collapse collapse" data-bs-parent="#generalAccordion">
+                <div class="accordion-body">
+                  Yes, we take data security seriously:
+                  <ul>
+                    <li>All data is encrypted in transit and at rest</li>
+                    <li>Regular security updates and monitoring</li>
+                    <li>Access controls and user authentication</li>
+                    <li>Regular backups to prevent data loss</li>
+                    <li>Compliance with educational data privacy standards</li>
+                  </ul>
+                  For more details, see our <a href="/help/privacy">Privacy Policy</a>.
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#general4">
+                  How much does AttendanceMS cost?
+                </button>
+              </h2>
+              <div id="general4" class="accordion-collapse collapse" data-bs-parent="#generalAccordion">
+                <div class="accordion-body">
+                  AttendanceMS offers flexible pricing:
+                  <ul>
+                    <li><strong>Free Plan:</strong> Up to 50 students, basic features</li>
+                    <li><strong>School Plan:</strong> Unlimited students, advanced features, priority support</li>
+                    <li><strong>District Plan:</strong> Multiple schools, advanced analytics, custom integrations</li>
+                  </ul>
+                  Contact us for detailed pricing information based on your needs.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Attendance FAQs -->
+      <div class="tab-pane fade" id="attendance" role="tabpanel">
+        <div class="faq-section">
+          <div class="accordion" id="attendanceAccordion">
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#attendance1">
+                  How do I mark attendance for my class?
+                </button>
+              </h2>
+              <div id="attendance1" class="accordion-collapse collapse show" data-bs-parent="#attendanceAccordion">
+                <div class="accordion-body">
+                  To mark attendance:
+                  <ol>
+                    <li>Go to "Daily Attendance" from your dashboard</li>
+                    <li>Select your class and the date</li>
+                    <li>Choose the period (if applicable)</li>
+                    <li>Mark each student as Present, Absent, Late, or Excused</li>
+                    <li>Click "Save Attendance"</li>
+                  </ol>
+                  <strong>Quick Tip:</strong> Use "Mark All Present" and then change individual students who are absent.
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#attendance2">
+                  Can I edit attendance after I've saved it?
+                </button>
+              </h2>
+              <div id="attendance2" class="accordion-collapse collapse" data-bs-parent="#attendanceAccordion">
+                <div class="accordion-body">
+                  Yes, you can edit attendance:
+                  <ul>
+                    <li>Go to "Attendance History" or "Edit Attendance"</li>
+                    <li>Select the date and class you want to modify</li>
+                    <li>Make your changes</li>
+                    <li>Click "Update Attendance"</li>
+                  </ul>
+                  <strong>Note:</strong> All changes are logged for audit purposes.
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#attendance3">
+                  What's the difference between Absent and Excused?
+                </button>
+              </h2>
+              <div id="attendance3" class="accordion-collapse collapse" data-bs-parent="#attendanceAccordion">
+                <div class="accordion-body">
+                  <ul>
+                    <li><strong>Absent:</strong> Student is not in class without prior authorization</li>
+                    <li><strong>Excused:</strong> Student is not in class but has prior authorization (sick leave, family emergency, etc.)</li>
+                  </ul>
+                  Excused absences typically don't count against attendance requirements, while unexcused absences do.
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#attendance4">
+                  How do I handle late arrivals?
+                </button>
+              </h2>
+              <div id="attendance4" class="accordion-collapse collapse" data-bs-parent="#attendanceAccordion">
+                <div class="accordion-body">
+                  For students who arrive late:
+                  <ol>
+                    <li>Initially mark them as "Absent" when taking attendance</li>
+                    <li>When they arrive, change their status to "Late"</li>
+                    <li>Optionally, add a note with the arrival time</li>
+                  </ol>
+                  You can also set up automatic late marking based on time thresholds in your class settings.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Technical FAQs -->
+      <div class="tab-pane fade" id="technical" role="tabpanel">
+        <div class="faq-section">
+          <div class="accordion" id="technicalAccordion">
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#technical1">
+                  I'm having trouble logging in. What should I do?
+                </button>
+              </h2>
+              <div id="technical1" class="accordion-collapse collapse show" data-bs-parent="#technicalAccordion">
+                <div class="accordion-body">
+                  If you can't log in, try these steps:
+                  <ol>
+                    <li>Check that you're using the correct email address</li>
+                    <li>Ensure your password is correct (check caps lock)</li>
+                    <li>Clear your browser cache and cookies</li>
+                    <li>Try a different browser</li>
+                    <li>Check your internet connection</li>
+                  </ol>
+                  If you still can't log in, <a href="/help/contact">contact support</a> for assistance.
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#technical2">
+                  The system is running slowly. How can I fix this?
+                </button>
+              </h2>
+              <div id="technical2" class="accordion-collapse collapse" data-bs-parent="#technicalAccordion">
+                <div class="accordion-body">
+                  To improve performance:
+                  <ul>
+                    <li>Close unnecessary browser tabs</li>
+                    <li>Clear your browser cache</li>
+                    <li>Check your internet connection speed</li>
+                    <li>Use Google Chrome for best performance</li>
+                    <li>Disable browser extensions temporarily</li>
+                    <li>Restart your browser</li>
+                  </ul>
+                  If problems persist, it may be a server issue - check our status page or contact support.
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#technical3">
+                  I'm getting a "CSV format error" when importing students. What's wrong?
+                </button>
+              </h2>
+              <div id="technical3" class="accordion-collapse collapse" data-bs-parent="#technicalAccordion">
+                <div class="accordion-body">
+                  CSV import errors usually occur because:
+                  <ul>
+                    <li>Missing required columns (name, roll_no)</li>
+                    <li>Incorrect column headers</li>
+                    <li>Special characters in the data</li>
+                    <li>File encoding issues</li>
+                  </ul>
+                  <strong>Solution:</strong> Download our CSV template and ensure your data matches the format exactly.
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#technical4">
+                  Can I use AttendanceMS on my mobile phone?
+                </button>
+              </h2>
+              <div id="technical4" class="accordion-collapse collapse" data-bs-parent="#technicalAccordion">
+                <div class="accordion-body">
+                  Yes! AttendanceMS is fully responsive and works on:
+                  <ul>
+                    <li>Smartphones (iOS and Android)</li>
+                    <li>Tablets</li>
+                    <li>Desktop computers</li>
+                    <li>Laptops</li>
+                  </ul>
+                  For the best mobile experience, add AttendanceMS to your home screen as a web app.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Account FAQs -->
+      <div class="tab-pane fade" id="account" role="tabpanel">
+        <div class="faq-section">
+          <div class="accordion" id="accountAccordion">
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#account1">
+                  How do I change my password?
+                </button>
+              </h2>
+              <div id="account1" class="accordion-collapse collapse show" data-bs-parent="#accountAccordion">
+                <div class="accordion-body">
+                  To change your password:
+                  <ol>
+                    <li>Go to your Profile page</li>
+                    <li>Click "Change Password"</li>
+                    <li>Enter your current password</li>
+                    <li>Enter your new password twice</li>
+                    <li>Click "Update Password"</li>
+                  </ol>
+                  <strong>Security Tip:</strong> Use a strong password with at least 8 characters, including numbers and symbols.
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#account2">
+                  I forgot my password. How do I reset it?
+                </button>
+              </h2>
+              <div id="account2" class="accordion-collapse collapse" data-bs-parent="#accountAccordion">
+                <div class="accordion-body">
+                  To reset your password:
+                  <ol>
+                    <li>Go to the login page</li>
+                    <li>Click "Forgot Password?"</li>
+                    <li>Enter your email address</li>
+                    <li>Check your email for reset instructions</li>
+                    <li>Follow the link to create a new password</li>
+                  </ol>
+                  If you don't receive the email, check your spam folder or contact your administrator.
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#account3">
+                  How do I update my profile information?
+                </button>
+              </h2>
+              <div id="account3" class="accordion-collapse collapse" data-bs-parent="#accountAccordion">
+                <div class="accordion-body">
+                  To update your profile:
+                  <ol>
+                    <li>Click on your name in the top navigation</li>
+                    <li>Select "Profile" from the dropdown</li>
+                    <li>Edit the information you want to change</li>
+                    <li>Click "Save Changes"</li>
+                  </ol>
+                  You can update your name, phone number, profile photo, and other details.
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#account4">
+                  Can I change my email address?
+                </button>
+              </h2>
+              <div id="account4" class="accordion-collapse collapse" data-bs-parent="#accountAccordion">
+                <div class="accordion-body">
+                  Email address changes require administrator approval for security reasons:
+                  <ol>
+                    <li>Contact your school administrator</li>
+                    <li>Provide your current and new email addresses</li>
+                    <li>The administrator will update your account</li>
+                    <li>You'll receive a confirmation email at your new address</li>
+                  </ol>
+                  This process helps maintain account security and prevents unauthorized changes.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Still Need Help -->
+    <div class="faq-section">
+      <div class="text-center">
+        <h3><i class="fas fa-question-circle me-2"></i>Still Need Help?</h3>
+        <p class="text-muted mb-4">Can't find what you're looking for? We're here to help!</p>
+        <div class="row justify-content-center">
+          <div class="col-md-4">
+            <a href="/help/contact" class="btn btn-primary btn-lg w-100 mb-3">
+              <i class="fas fa-headset me-2"></i>Contact Support
+            </a>
+          </div>
+          <div class="col-md-4">
+            <a href="/help/videos" class="btn btn-outline-primary btn-lg w-100 mb-3">
+              <i class="fas fa-play-circle me-2"></i>Watch Tutorials
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // FAQ Search functionality
+    document.getElementById('faqSearch').addEventListener('input', function(e) {
+      const searchTerm = e.target.value.toLowerCase();
+      const accordionItems = document.querySelectorAll('.accordion-item');
+      
+      accordionItems.forEach(item => {
+        const question = item.querySelector('.accordion-button').textContent.toLowerCase();
+        const answer = item.querySelector('.accordion-body').textContent.toLowerCase();
+        
+        if (question.includes(searchTerm) || answer.includes(searchTerm)) {
+          item.style.display = 'block';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    });
+
+    // Auto-expand first item in each category
+    document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
+      tab.addEventListener('shown.bs.tab', function(e) {
+        const targetPane = document.querySelector(e.target.getAttribute('data-bs-target'));
+        const firstAccordionItem = targetPane.querySelector('.accordion-collapse');
+        if (firstAccordionItem && !firstAccordionItem.classList.contains('show')) {
+          const button = targetPane.querySelector('.accordion-button');
+          if (button) {
+            button.click();
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
