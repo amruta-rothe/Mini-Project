@@ -18,6 +18,7 @@ import dailyAttendanceRouter from './routes/daily-attendance.js';
 import emailReportsRouter from './routes/email-reports.js';
 import bulkImportRouter from './routes/bulk-import.js';
 import analyticsRouter from './routes/analytics.js';
+import profileRouter from './routes/profile.js';
 
 dotenv.config();
 
@@ -79,6 +80,7 @@ app.use('/', dailyAttendanceRouter);
 app.use('/', emailReportsRouter);
 app.use('/', bulkImportRouter);
 app.use('/', analyticsRouter);
+app.use('/', profileRouter);
 
 app.get('/health', (req, res) => {
   res.status(200).json({ ok: true });

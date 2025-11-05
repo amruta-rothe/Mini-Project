@@ -34,12 +34,58 @@ function all(sql, params = []) {
 
 async function migrate() {
   await run(`PRAGMA foreign_keys = ON;`);
+  
+  // Add new columns to existing teachers table if they don't exist
+  try {
+    await run(`ALTER TABLE teachers ADD COLUMN phone TEXT`);
+  } catch (e) { /* Column already exists */ }
+  
+  try {
+    await run(`ALTER TABLE teachers ADD COLUMN address TEXT`);
+  } catch (e) { /* Column already exists */ }
+  
+  try {
+    await run(`ALTER TABLE teachers ADD COLUMN profile_photo TEXT`);
+  } catch (e) { /* Column already exists */ }
+  
+  try {
+    await run(`ALTER TABLE teachers ADD COLUMN bio TEXT`);
+  } catch (e) { /* Column already exists */ }
+  
+  try {
+    await run(`ALTER TABLE teachers ADD COLUMN department TEXT`);
+  } catch (e) { /* Column already exists */ }
+  
+  try {
+    await run(`ALTER TABLE teachers ADD COLUMN designation TEXT`);
+  } catch (e) { /* Column already exists */ }
+  
+  try {
+    await run(`ALTER TABLE teachers ADD COLUMN date_of_birth DATE`);
+  } catch (e) { /* Column already exists */ }
+  
+  try {
+    await run(`ALTER TABLE teachers ADD COLUMN date_joined DATE DEFAULT (date('now'))`);
+  } catch (e) { /* Column already exists */ }
+  
+  try {
+    await run(`ALTER TABLE teachers ADD COLUMN updated_at TEXT DEFAULT (datetime('now'))`);
+  } catch (e) { /* Column already exists */ }
 
   await run(`CREATE TABLE IF NOT EXISTS teachers (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
-    password_hash TEXT NOT NULL
+    password_hash TEXT NOT NULL,
+    phone TEXT,
+    address TEXT,
+    profile_photo TEXT,
+    bio TEXT,
+    department TEXT,
+    designation TEXT,
+    date_of_birth DATE,
+    date_joined DATE DEFAULT (date('now')),
+    updated_at TEXT DEFAULT (datetime('now'))
   );`);
 
 
