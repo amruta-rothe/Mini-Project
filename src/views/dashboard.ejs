@@ -97,25 +97,25 @@
       <div class="col-md-3 col-lg-2 px-0">
         <div class="sidebar">
           <nav class="nav flex-column pt-3">
-            <a class="nav-link active" href="/dashboard">
+            <a class="nav-link active" href="/dashboard" data-bs-toggle="tooltip" data-bs-placement="right" title="Overview and statistics">
               <i class="fas fa-tachometer-alt"></i>Dashboard
             </a>
-            <a class="nav-link" href="/manage/class/new">
-              <i class="fas fa-plus-circle"></i>Create Class
-            </a>
-            <a class="nav-link" href="/reports">
-              <i class="fas fa-chart-bar"></i>Reports
-            </a>
-            <a class="nav-link" href="/daily-attendance">
+            <a class="nav-link" href="/daily-attendance" data-bs-toggle="tooltip" data-bs-placement="right" title="Mark daily attendance for students">
               <i class="fas fa-calendar-check"></i>Daily Attendance
             </a>
-            <a class="nav-link" href="/weekly-reports">
+            <a class="nav-link" href="/weekly-reports" data-bs-toggle="tooltip" data-bs-placement="right" title="Send weekly reports to parents">
               <i class="fas fa-envelope"></i>Weekly Reports
             </a>
-            <a class="nav-link" href="/manage">
+            <a class="nav-link" href="/manage/class/new" data-bs-toggle="tooltip" data-bs-placement="right" title="Create new class">
+              <i class="fas fa-plus-circle"></i>Create Class
+            </a>
+            <a class="nav-link" href="/reports" data-bs-toggle="tooltip" data-bs-placement="right" title="Generate detailed reports">
+              <i class="fas fa-chart-bar"></i>Reports
+            </a>
+            <a class="nav-link" href="/manage" data-bs-toggle="tooltip" data-bs-placement="right" title="Manage classes and students">
               <i class="fas fa-cogs"></i>Manage
             </a>
-            <a class="nav-link" href="/insights">
+            <a class="nav-link" href="/insights" data-bs-toggle="tooltip" data-bs-placement="right" title="View attendance insights">
               <i class="fas fa-lightbulb"></i>Insights
             </a>
           </nav>
@@ -127,11 +127,35 @@
         <div class="main-content">
           <!-- Welcome Section -->
           <div class="welcome-section">
-            <div class="welcome-title">
-              <i class="fas fa-sun me-2"></i>Good Morning, <%= currentUser.name %>!
-            </div>
-            <div class="welcome-subtitle">
-              Welcome back to your attendance management dashboard
+            <div class="row align-items-center">
+              <div class="col-md-8">
+                <div class="welcome-title">
+                  <i class="fas fa-sun me-2"></i>Good Morning, <%= currentUser.name %>!
+                </div>
+                <div class="welcome-subtitle">
+                  Welcome back to your attendance management dashboard
+                </div>
+                <div class="mt-3">
+                  <span class="badge bg-light text-dark me-2">
+                    <i class="fas fa-calendar me-1"></i>
+                    <%= new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) %>
+                  </span>
+                  <span class="badge bg-light text-dark">
+                    <i class="fas fa-clock me-1"></i>
+                    <span id="currentTime"></span>
+                  </span>
+                </div>
+              </div>
+              <div class="col-md-4 text-end">
+                <div class="quick-actions">
+                  <button class="btn btn-light btn-sm me-2" onclick="showTour()" data-bs-toggle="tooltip" title="Take a quick tour">
+                    <i class="fas fa-question-circle me-1"></i>Help
+                  </button>
+                  <button class="btn btn-light btn-sm" onclick="toggleNotifications()" data-bs-toggle="tooltip" title="Toggle notifications">
+                    <i class="fas fa-bell me-1"></i>Alerts
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 

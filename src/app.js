@@ -31,14 +31,17 @@ app.set('trust proxy', 1);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-app.use((req, res, next) => {
-  const start = Date.now();
-  res.on('finish', () => {
-    const ms = Date.now() - start;
-    console.log(`${req.method} ${req.originalUrl} -> ${res.statusCode} ${ms}ms`);
+// Request logging (only in development)
+if (process.env.NODE_ENV !== 'production') {
+  app.use((req, res, next) => {
+    const start = Date.now();
+    res.on('finish', () => {
+      const ms = Date.now() - start;
+      console.log(`${req.method} ${req.originalUrl} -> ${res.statusCode} ${ms}ms`);
+    });
+    next();
   });
-  next();
-});
+}
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
