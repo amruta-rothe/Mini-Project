@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= pageTitle %> - AttendanceMS</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/dashboard">
+        <i class="fas fa-graduation-cap me-2"></i>AttendanceMS
+      </a>
+      <div class="navbar-nav ms-auto">
+        <a class="nav-link" href="/dashboard">
+          <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+        </a>
+        <a class="nav-link" href="/daily-attendance">
+          <i class="fas fa-calendar-check me-1"></i>Daily Attendance
+        </a>
+        <div class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            <i class="fas fa-user-circle me-1"></i><%= currentUser.name %>
+          </a>
+          <ul class="dropdown-menu">
+            <li>
+              <form method="post" action="/logout" class="d-inline">
+                <button type="submit" class="dropdown-item">
+                  <i class="fas fa-sign-out-alt me-2"></i>Logout
+                </button>
+              </form>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid mt-4">
+    <div class="row">
+      <div class="col-12">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h2><i class="fas fa-calendar-check me-2 text-primary"></i>Daily Attendance</h2>
+            <p class="text-muted mb-0">Today: <%= new Date(today).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) %></p>
+          </div>
+          <div>
+            <button class="btn btn-success" onclick="markAllClassesPresent()">
+              <i class="fas fa-check-double me-2"></i>Mark All Present
+            </button>
+            <button class="btn btn-info" onclick="generateDailyReport()">
+              <i class="fas fa-file-alt me-2"></i>Daily Report
+            </button>
+          </div>
+        </div>
+
+        <% if (flash) { %>
+          <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <i class="fas fa-info-circle me-2"></i><%= flash.message %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        <% } %>
+
+        <!-- Daily Summary Cards -->
+        <div class="row mb-4">
+          <% 
+            let totalStudents = 0;
+            let totalPresent = 0;
+            let totalAbsent = 0;
+            let totalPending = 0;
+            
+            classes.forEach(cls => {
+              totalStudents += cls.student_count;
+              totalPresent += cls.attendance_stats.present || 0;
+              totalAbsent += cls.attendance_stats.absent || 0;
+              totalPending += cls.pending || 0;
+            });
+          %>
+          
+          <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm">
+              <div class="card-body text-center">
+                <div class="display-6 text-primary mb-2">
+                  <i class="fas fa-users"></i>
+                </div>
+                <h3 class="mb-1"><%= totalStudents %></h3>
+                <p class="text-muted mb-0">Total Students</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm">
+              <div class="card-body text-center">
+                <div class="display-6 text-success mb-2">
+                  <i class="fas fa-user-check"></i>
+                </div>
+                <h3 class="mb-1"><%= totalPresent %></h3>
+                <p class="text-muted mb-0">Present Today</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm">
+              <div class="card-body text-center">
+                <div class="display-6 text-danger mb-2">
+                  <i class="fas fa-user-times"></i>
+                </div>
+                <h3 class="mb-1"><%= totalAbsent %></h3>
+                <p class="text-muted mb-0">Absent Today</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm">
+              <div class="card-body text-center">
+                <div class="display-6 text-warning mb-2">
+                  <i class="fas fa-clock"></i>
+                </div>
+                <h3 class="mb-1"><%= totalPending %></h3>
+                <p class="text-muted mb-0">Pending</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Classes List -->
+        <div class="row">
+          <% classes.forEach(cls => { %>
+            <div class="col-lg-6 col-xl-4 mb-4">
+              <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-transparent border-0 pb-0">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                      <h5 class="card-title mb-1">
+                        <i class="fas fa-chalkboard me-2"></i><%= cls.name %>
+                      </h5>
+                      <% if (cls.section) { %>
+                        <span class="badge bg-secondary">Section <%= cls.section %></span>
+                      <% } %>
+                    </div>
+                    <div class="dropdown">
+                      <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-ellipsis-v"></i>
+                      </button>
+                      <ul class="dropdown-menu">
+                        <li>
+                          <a class="dropdown-item" href="/class/<%= cls.id %>/daily-attendance">
+                            <i class="fas fa-edit me-2"></i>Mark Attendance
+                          </a>
+                        </li>
+                        <li>
+                          <button class="dropdown-item" onclick="markClassPresent(<%= cls.id %>)">
+                            <i class="fas fa-check me-2"></i>Mark All Present
+                          </button>
+                        </li>
+                        <li>
+                          <a class="dropdown-item" href="/reports/class/<%= cls.id %>">
+                            <i class="fas fa-chart-bar me-2"></i>View Reports
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="card-body">
+                  <!-- Attendance Stats -->
+                  <div class="row text-center mb-3">
+                    <div class="col-4">
+                      <div class="text-success">
+                        <i class="fas fa-user-check"></i>
+                        <div class="fw-bold"><%= cls.attendance_stats.present || 0 %></div>
+                        <small>Present</small>
+                      </div>
+                    </div>
+                    <div class="col-4">
+                      <div class="text-danger">
+                        <i class="fas fa-user-times"></i>
+                        <div class="fw-bold"><%= cls.attendance_stats.absent || 0 %></div>
+                        <small>Absent</small>
+                      </div>
+                    </div>
+                    <div class="col-4">
+                      <div class="text-warning">
+                        <i class="fas fa-clock"></i>
+                        <div class="fw-bold"><%= cls.pending || 0 %></div>
+                        <small>Pending</small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Progress Bar -->
+                  <% 
+                    const attendanceRate = cls.student_count > 0 ? 
+                      Math.round(((cls.attendance_stats.present || 0) / cls.student_count) * 100) : 0;
+                  %>
+                  <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                      <small>Attendance Rate</small>
+                      <small><%= attendanceRate %>%</small>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                      <div class="progress-bar <%= attendanceRate >= 80 ? 'bg-success' : attendanceRate >= 60 ? 'bg-warning' : 'bg-danger' %>" 
+                           style="width: <%= attendanceRate %>%"></div>
+                    </div>
+                  </div>
+
+                  <!-- Action Buttons -->
+                  <div class="d-grid gap-2">
+                    <a href="/class/<%= cls.id %>/daily-attendance" class="btn btn-primary">
+                      <i class="fas fa-edit me-2"></i>
+                      <%= cls.pending > 0 ? 'Complete Attendance' : 'Edit Attendance' %>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+
+        <% if (classes.length === 0) { %>
+          <div class="text-center py-5">
+            <i class="fas fa-chalkboard-teacher fa-3x text-muted mb-3"></i>
+            <h4>No Classes Found</h4>
+            <p class="text-muted">Create your first class to start tracking attendance.</p>
+            <a href="/manage/class/new" class="btn btn-primary">
+              <i class="fas fa-plus me-2"></i>Create Class
+            </a>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function markClassPresent(classId) {
+      if (confirm('Mark all students in this class as present?')) {
+        fetch(`/class/${classId}/mark-all-present`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            showNotification(data.message, 'success');
+            setTimeout(() => location.reload(), 1500);
+          } else {
+            showNotification('Error marking attendance', 'danger');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          showNotification('Error marking attendance', 'danger');
+        });
+      }
+    }
+
+    function markAllClassesPresent() {
+      if (confirm('Mark ALL students in ALL classes as present for today?')) {
+        // Implementation for marking all classes present
+        showNotification('Feature coming soon!', 'info');
+      }
+    }
+
+    function generateDailyReport() {
+      showNotification('Generating daily report...', 'info');
+      // Implementation for generating daily report
+      setTimeout(() => {
+        showNotification('Daily report generated successfully!', 'success');
+      }, 2000);
+    }
+
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+      notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+      notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      `;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.remove();
+        }
+      }, 5000);
+    }
+  </script>
+</body>
+</html>

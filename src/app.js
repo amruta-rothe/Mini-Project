@@ -14,6 +14,8 @@ import periodsRouter from './routes/periods.js';
 import manageRouter from './routes/manage.js';
 import apiRouter from './routes/api.js';
 import insightsRouter from './routes/insights.js';
+import dailyAttendanceRouter from './routes/daily-attendance.js';
+import emailReportsRouter from './routes/email-reports.js';
 
 dotenv.config();
 
@@ -68,6 +70,8 @@ app.use('/', periodsRouter);
 app.use('/', manageRouter);
 app.use('/', apiRouter);
 app.use('/', insightsRouter);
+app.use('/', dailyAttendanceRouter);
+app.use('/', emailReportsRouter);
 
 app.get('/health', (req, res) => {
   res.status(200).json({ ok: true });
