@@ -203,3 +203,4 @@ router.get('/api/teacher/trend', requireAuth, async (req, res) => {
   });
   res.json(series);
 });
+export default router;
