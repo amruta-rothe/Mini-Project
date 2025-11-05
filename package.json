@@ -1,6 +1,7 @@
 {
-  "name": "attendance-portal",
-  "version": "0.1.1",
+  "name": "attendancems",
+  "version": "1.0.0",
+  "description": "A web based attendance management system built with Node.js and SQLite",
   "private": true,
   "type": "module",
   "scripts": {
@@ -23,5 +24,24 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.0"
-  }
+  },
+  "keywords": [
+    "attendance",
+    "management",
+    "system",
+    "nodejs",
+    "express",
+    "sqlite",
+    "education"
+  ],
+  "author": "Mayuri Futane <mjsfutane21@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Mayuri2428/Mini-Project.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Mayuri2428/Mini-Project/issues"
+  },
+  "homepage": "https://github.com/Mayuri2428/Mini-Project#readme"
 }

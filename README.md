@@ -1,61 +1,70 @@
 # AttendanceMS
 
-A web based attendance management system built with Node.js, Express.js, SQLite, and EJS.
+A web based attendance management system built with Node.js and SQLite.
+
+## About
+
+This project is a web based attendance management system built with Node.js and SQLite. It allows teachers to mark attendance for students and generate reports. The system also allows students to view their attendance and parents to view their child's attendance.
 
 ## Features
 
-- **Teacher Dashboard**: Overview of classes, students, and attendance statistics
-- **Student Management**: Add, edit, and manage student information
-- **Attendance Tracking**: Mark daily attendance with multiple status options (Present, Absent, Late, Excused)
-- **Period-wise Attendance**: Track attendance for different class periods
-- **Reports Generation**: Generate detailed attendance reports with date ranges
-- **Data Import/Export**: Import students via CSV files and export reports
-- **Email Notifications**: Send automated email alerts to parents for absences
-- **SMS Integration**: Send SMS notifications via Twilio (optional)
-- **Visual Analytics**: Interactive charts and graphs for attendance insights
-- **Responsive Design**: Mobile-friendly interface with Bootstrap
+- Teacher can mark attendance for students
+- Teacher can view attendance reports
+- Teacher can add/edit/delete students
+- Teacher can add/edit/delete classes
+- Teacher can add/edit/delete subjects
+- Student can view their attendance
+- Parent can view their child's attendance
+- Admin can manage teachers, students, classes, subjects
+- Email notifications to parents when student is absent
+- SMS notifications to parents when student is absent (optional)
+- Export attendance reports to PDF and Excel
+- Import students from CSV file
+- Responsive design
 
-## Technology Stack
+## Technology Used
 
+- **Frontend**: HTML, CSS, JavaScript, Bootstrap
 - **Backend**: Node.js, Express.js
 - **Database**: SQLite
-- **Frontend**: EJS, Bootstrap 5, Chart.js
-- **Authentication**: Express-session, bcrypt
-- **File Upload**: Multer
+- **Libraries**: jQuery, Chart.js, EJS
 - **Email**: Nodemailer
-- **SMS**: Twilio API
+- **SMS**: Twilio API (optional)
+
+## Requirements
+
+- Node.js (v18 or higher)
+- npm
 
 ## Installation
-
-### Prerequisites
-- Node.js (v18 or higher)
-- npm or yarn
-
-### Setup
 
 1. Clone the repository
 ```bash
 git clone https://github.com/Mayuri2428/Mini-Project.git
+```
+
+2. Navigate to the project directory
+```bash
 cd Mini-Project
 ```
 
-2. Install dependencies
+3. Install dependencies
 ```bash
 npm install
 ```
 
-3. Initialize the database
+4. Initialize the database
 ```bash
 npm run db:init
 npm run db:seed
 ```
 
-4. Configure environment variables
+5. Copy the environment file
 ```bash
 cp .env.example .env
 ```
 
-Edit the `.env` file with your configuration:
+6. Configure the environment variables in `.env` file
 ```env
 SESSION_SECRET=your_session_secret
 SMTP_HOST=smtp.gmail.com
@@ -68,58 +77,56 @@ TWILIO_TOKEN=your_twilio_token
 TWILIO_FROM=+1234567890
 ```
 
-5. Start the application
+7. Start the server
 ```bash
-# Development
-npm run dev
-
-# Production
 npm start
 ```
 
-6. Open your browser and navigate to `http://localhost:3000`
+8. Open your browser and go to `http://localhost:3000`
 
-## Default Login
+## Default Login Credentials
+
 - **Email**: mjsfutane21@gmail.com
 - **Password**: abc@1234
 
-## Usage
+## Screenshots
 
-1. **Login** with your teacher credentials
-2. **Create Classes** and add students
-3. **Mark Attendance** daily for each class
-4. **Generate Reports** to track student performance
-5. **Import/Export** data as needed
+### Login Page
+![Login Page](screenshots/login.png)
 
-## Deployment
+### Dashboard
+![Dashboard](screenshots/dashboard.png)
 
-### Railway (Recommended)
-1. Connect your GitHub repository to [Railway](https://railway.app)
-2. Deploy automatically using the included `railway.json` configuration
+### Mark Attendance
+![Mark Attendance](screenshots/mark-attendance.png)
 
-### Render
-1. Connect your GitHub repository to [Render](https://render.com)
-2. Deploy using the included `render.yaml` configuration
+### View Attendance
+![View Attendance](screenshots/view-attendance.png)
+
+### Reports
+![Reports](screenshots/reports.png)
 
 ## Database Schema
 
-- **teachers**: Teacher accounts and authentication
-- **classes**: Class information and subjects
-- **students**: Student details and enrollment
-- **attendance**: Daily attendance records
-- **periods**: Class periods and schedules
+The system uses SQLite database with the following tables:
+
+- **teachers** - Store teacher information
+- **classes** - Store class information  
+- **students** - Store student information
+- **attendance** - Store attendance records
+- **periods** - Store class periods
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Support
+## Contact
 
-For issues and questions, please open an issue on GitHub or contact mjsfutane21@gmail.com
+If you have any questions or suggestions, feel free to reach out:
+
+- **Email**: mjsfutane21@gmail.com
+- **GitHub**: [Mayuri2428](https://github.com/Mayuri2428)
