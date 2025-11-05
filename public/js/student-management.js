@@ -94,6 +94,8 @@ class StudentManager {
         document.getElementById('studentPhone').value = student.phone || '';
         document.getElementById('dateOfBirth').value = student.date_of_birth || '';
         document.getElementById('enrollmentStatus').value = student.enrollment_status || 'active';
+        document.getElementById('academicYear').value = student.academic_year || '';
+        document.getElementById('branch').value = student.branch || '';
         document.getElementById('address').value = student.address || '';
         document.getElementById('guardianName').value = student.guardian_name || '';
         document.getElementById('guardianEmail').value = student.guardian_email || '';
@@ -118,6 +120,8 @@ class StudentManager {
             phone: document.getElementById('studentPhone').value,
             date_of_birth: document.getElementById('dateOfBirth').value,
             enrollment_status: document.getElementById('enrollmentStatus').value,
+            academic_year: document.getElementById('academicYear').value,
+            branch: document.getElementById('branch').value,
             address: document.getElementById('address').value,
             guardian_name: document.getElementById('guardianName').value,
             guardian_email: document.getElementById('guardianEmail').value,

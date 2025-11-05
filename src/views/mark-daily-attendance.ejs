@@ -78,6 +78,63 @@
       </div>
     </div>
 
+    <!-- Student Filters -->
+    <% if (studentYears && studentYears.length > 1 || studentBranches && studentBranches.length > 1) { %>
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body">
+            <div class="row align-items-end">
+              <% if (studentYears && studentYears.length > 1) { %>
+              <div class="col-md-3">
+                <label class="form-label">
+                  <i class="fas fa-calendar me-1"></i>Filter by Year
+                </label>
+                <select class="form-select" id="studentYearFilter" onchange="applyStudentFilters()">
+                  <option value="">All Years</option>
+                  <% studentYears.forEach(year => { %>
+                    <option value="<%= year.academic_year %>" <%= selectedYear === year.academic_year ? 'selected' : '' %>>
+                      <%= year.academic_year %>
+                    </option>
+                  <% }) %>
+                </select>
+              </div>
+              <% } %>
+              
+              <% if (studentBranches && studentBranches.length > 1) { %>
+              <div class="col-md-3">
+                <label class="form-label">
+                  <i class="fas fa-building me-1"></i>Filter by Branch
+                </label>
+                <select class="form-select" id="studentBranchFilter" onchange="applyStudentFilters()">
+                  <option value="">All Branches</option>
+                  <% studentBranches.forEach(branch => { %>
+                    <option value="<%= branch.branch %>" <%= selectedBranch === branch.branch ? 'selected' : '' %>>
+                      <%= branch.branch %>
+                    </option>
+                  <% }) %>
+                </select>
+              </div>
+              <% } %>
+              
+              <div class="col-md-3">
+                <button class="btn btn-outline-secondary" onclick="clearStudentFilters()">
+                  <i class="fas fa-times me-2"></i>Clear Filters
+                </button>
+              </div>
+              
+              <div class="col-md-3 text-end">
+                <small class="text-muted">
+                  Showing <%= students.length %> student<%= students.length !== 1 ? 's' : '' %>
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% } %>
+
     <!-- Quick Stats -->
     <div class="row mb-4">
       <div class="col-md-3">
@@ -129,6 +186,21 @@
                   </div>
                   <div class="flex-grow-1">
                     <h6 class="mb-1"><%= student.name %></h6>
+                    
+                    <!-- Year and Branch Info -->
+                    <div class="mb-1">
+                      <% if (student.student_year) { %>
+                        <span class="badge bg-info me-1">
+                          <i class="fas fa-calendar me-1"></i><%= student.student_year %>
+                        </span>
+                      <% } %>
+                      <% if (student.student_branch) { %>
+                        <span class="badge bg-secondary">
+                          <i class="fas fa-building me-1"></i><%= student.student_branch %>
+                        </span>
+                      <% } %>
+                    </div>
+                    
                     <% if (student.parent_name) { %>
                       <small class="text-muted">
                         <i class="fas fa-user me-1"></i><%= student.parent_name %>
@@ -277,6 +349,32 @@
       
       updateCounters();
     });
+
+    // Student filtering functions
+    function applyStudentFilters() {
+      const year = document.getElementById('studentYearFilter') ? document.getElementById('studentYearFilter').value : '';
+      const branch = document.getElementById('studentBranchFilter') ? document.getElementById('studentBranchFilter').value : '';
+      
+      const params = new URLSearchParams(window.location.search);
+      if (year) {
+        params.set('year', year);
+      } else {
+        params.delete('year');
+      }
+      
+      if (branch) {
+        params.set('branch', branch);
+      } else {
+        params.delete('branch');
+      }
+      
+      const url = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
+      window.location.href = url;
+    }
+
+    function clearStudentFilters() {
+      window.location.href = window.location.pathname;
+    }
 
     // Form validation
     document.getElementById('attendanceForm').addEventListener('submit', function(e) {

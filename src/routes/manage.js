@@ -185,7 +185,7 @@ router.post('/class/:id/students/save', requireAuth, async (req, res) => {
   
   const {
     student_id, name, roll_no, email, phone, date_of_birth, enrollment_status,
-    address, emergency_contact, emergency_phone, notes,
+    academic_year, branch, address, emergency_contact, emergency_phone, notes,
     guardian_name, guardian_email, guardian_phone
   } = req.body;
   
@@ -197,13 +197,14 @@ router.post('/class/:id/students/save', requireAuth, async (req, res) => {
       await run(`
         UPDATE students SET 
           name = ?, roll_no = ?, email = ?, phone = ?, date_of_birth = ?,
-          enrollment_status = ?, address = ?, emergency_contact = ?, 
-          emergency_phone = ?, notes = ?, updated_at = datetime('now')
+          enrollment_status = ?, academic_year = ?, branch = ?, address = ?, 
+          emergency_contact = ?, emergency_phone = ?, notes = ?, updated_at = datetime('now')
         WHERE id = ? AND class_id = ?
       `, [
         name, roll_no || null, email || null, phone || null, date_of_birth || null,
-        enrollment_status || 'active', address || null, emergency_contact || null,
-        emergency_phone || null, notes || null, student_id, classId
+        enrollment_status || 'active', academic_year || null, branch || null, 
+        address || null, emergency_contact || null, emergency_phone || null, 
+        notes || null, student_id, classId
       ]);
       studentId = student_id;
     } else {
@@ -211,12 +212,13 @@ router.post('/class/:id/students/save', requireAuth, async (req, res) => {
       const result = await run(`
         INSERT INTO students (
           name, roll_no, email, phone, date_of_birth, enrollment_status,
-          address, emergency_contact, emergency_phone, notes, class_id
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          academic_year, branch, address, emergency_contact, emergency_phone, notes, class_id
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `, [
         name, roll_no || null, email || null, phone || null, date_of_birth || null,
-        enrollment_status || 'active', address || null, emergency_contact || null,
-        emergency_phone || null, notes || null, classId
+        enrollment_status || 'active', academic_year || null, branch || null,
+        address || null, emergency_contact || null, emergency_phone || null, 
+        notes || null, classId
       ]);
       studentId = result.lastID;
     }

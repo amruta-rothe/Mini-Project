@@ -60,6 +60,50 @@
           </div>
         </div>
 
+        <!-- Year and Branch Filters -->
+        <div class="card border-0 shadow-sm mb-4">
+          <div class="card-body">
+            <div class="row align-items-end">
+              <div class="col-md-3">
+                <label class="form-label">
+                  <i class="fas fa-calendar me-1"></i>Academic Year
+                </label>
+                <select class="form-select" id="yearFilter" onchange="applyFilters()">
+                  <option value="">All Years</option>
+                  <% academicYears.forEach(year => { %>
+                    <option value="<%= year.academic_year %>" <%= selectedYear === year.academic_year ? 'selected' : '' %>>
+                      <%= year.academic_year %>
+                    </option>
+                  <% }) %>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">
+                  <i class="fas fa-building me-1"></i>Branch/Department
+                </label>
+                <select class="form-select" id="branchFilter" onchange="applyFilters()">
+                  <option value="">All Branches</option>
+                  <% branches.forEach(branch => { %>
+                    <option value="<%= branch.department %>" <%= selectedBranch === branch.department ? 'selected' : '' %>>
+                      <%= branch.department %>
+                    </option>
+                  <% }) %>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <button class="btn btn-outline-secondary" onclick="clearFilters()">
+                  <i class="fas fa-times me-2"></i>Clear Filters
+                </button>
+              </div>
+              <div class="col-md-3 text-end">
+                <small class="text-muted">
+                  Showing <%= classes.length %> class<%= classes.length !== 1 ? 'es' : '' %>
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <% if (flash) { %>
           <div class="alert alert-info alert-dismissible fade show" role="alert">
             <i class="fas fa-info-circle me-2"></i><%= flash.message %>
@@ -280,6 +324,22 @@
       setTimeout(() => {
         showNotification('Daily report generated successfully!', 'success');
       }, 2000);
+    }
+
+    function applyFilters() {
+      const year = document.getElementById('yearFilter').value;
+      const branch = document.getElementById('branchFilter').value;
+      
+      const params = new URLSearchParams();
+      if (year) params.append('year', year);
+      if (branch) params.append('branch', branch);
+      
+      const url = '/daily-attendance' + (params.toString() ? '?' + params.toString() : '');
+      window.location.href = url;
+    }
+
+    function clearFilters() {
+      window.location.href = '/daily-attendance';
     }
 
     function showNotification(message, type = 'info') {

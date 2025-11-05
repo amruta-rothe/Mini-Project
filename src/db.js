@@ -93,6 +93,8 @@ async function migrate() {
     { name: 'address', type: 'TEXT' },
     { name: 'emergency_contact', type: 'TEXT' },
     { name: 'emergency_phone', type: 'TEXT' },
+    { name: 'academic_year', type: 'TEXT' },
+    { name: 'branch', type: 'TEXT' },
     { name: 'created_at', type: 'TEXT DEFAULT (datetime(\'now\'))' },
     { name: 'updated_at', type: 'TEXT DEFAULT (datetime(\'now\'))' }
   ];

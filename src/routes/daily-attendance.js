@@ -13,15 +13,48 @@ router.get('/daily-attendance', requireAuth, async (req, res) => {
   const teacherId = req.session.user.id;
   const today = new Date().toISOString().slice(0, 10);
   
-  // Get all classes for this teacher
+  // Get filter parameters
+  const selectedYear = req.query.year || '';
+  const selectedBranch = req.query.branch || '';
+  
+  // Get all unique academic years and branches for this teacher
+  const academicYears = await all(`
+    SELECT DISTINCT academic_year 
+    FROM classes 
+    WHERE teacher_id = ? AND academic_year IS NOT NULL
+    ORDER BY academic_year DESC
+  `, [teacherId]);
+  
+  const branches = await all(`
+    SELECT DISTINCT department 
+    FROM classes 
+    WHERE teacher_id = ? AND department IS NOT NULL
+    ORDER BY department
+  `, [teacherId]);
+  
+  // Build filter conditions
+  let whereConditions = ['c.teacher_id = ?'];
+  let queryParams = [teacherId];
+  
+  if (selectedYear) {
+    whereConditions.push('c.academic_year = ?');
+    queryParams.push(selectedYear);
+  }
+  
+  if (selectedBranch) {
+    whereConditions.push('c.department = ?');
+    queryParams.push(selectedBranch);
+  }
+  
+  // Get filtered classes for this teacher
   const classes = await all(`
     SELECT c.*, COUNT(s.id) as student_count
     FROM classes c 
     LEFT JOIN students s ON c.id = s.class_id 
-    WHERE c.teacher_id = ? 
+    WHERE ${whereConditions.join(' AND ')}
     GROUP BY c.id
-    ORDER BY c.name
-  `, [teacherId]);
+    ORDER BY c.academic_year DESC, c.department, c.name
+  `, queryParams);
 
   // Get today's attendance summary for each class
   for (let cls of classes) {
@@ -46,6 +79,10 @@ router.get('/daily-attendance', requireAuth, async (req, res) => {
   res.render('daily-attendance', { 
     classes, 
     today,
+    academicYears,
+    branches,
+    selectedYear,
+    selectedBranch,
     pageTitle: 'Daily Attendance Tracking'
   });
 });
@@ -55,6 +92,10 @@ router.get('/class/:id/daily-attendance', requireAuth, async (req, res) => {
   const classId = parseInt(req.params.id);
   const teacherId = req.session.user.id;
   const today = new Date().toISOString().slice(0, 10);
+  
+  // Get filter parameters
+  const selectedYear = req.query.year || '';
+  const selectedBranch = req.query.branch || '';
   
   // Verify teacher owns this class
   const classInfo = await all(`
@@ -66,7 +107,41 @@ router.get('/class/:id/daily-attendance', requireAuth, async (req, res) => {
     return res.redirect('/daily-attendance');
   }
 
-  // Get all students in this class with today's attendance
+  // Get all unique academic years for students in this class
+  const studentYears = await all(`
+    SELECT DISTINCT 
+      COALESCE(s.academic_year, c.academic_year) as academic_year
+    FROM students s
+    JOIN classes c ON s.class_id = c.id
+    WHERE s.class_id = ? AND COALESCE(s.academic_year, c.academic_year) IS NOT NULL
+    ORDER BY academic_year DESC
+  `, [classId]);
+  
+  // Get all unique branches/departments for students in this class
+  const studentBranches = await all(`
+    SELECT DISTINCT 
+      COALESCE(s.branch, c.department) as branch
+    FROM students s
+    JOIN classes c ON s.class_id = c.id
+    WHERE s.class_id = ? AND COALESCE(s.branch, c.department) IS NOT NULL
+    ORDER BY branch
+  `, [classId]);
+
+  // Build filter conditions for students
+  let whereConditions = ['s.class_id = ?'];
+  let queryParams = [today, classId];
+  
+  if (selectedYear) {
+    whereConditions.push('(s.academic_year = ? OR (s.academic_year IS NULL AND c.academic_year = ?))');
+    queryParams.push(selectedYear, selectedYear);
+  }
+  
+  if (selectedBranch) {
+    whereConditions.push('(s.branch = ? OR (s.branch IS NULL AND c.department = ?))');
+    queryParams.push(selectedBranch, selectedBranch);
+  }
+
+  // Get filtered students in this class with today's attendance
   const students = await all(`
     SELECT 
       s.*,
@@ -74,18 +149,28 @@ router.get('/class/:id/daily-attendance', requireAuth, async (req, res) => {
       a.note,
       g.name as parent_name,
       g.email as parent_email,
-      g.phone as parent_phone
+      g.phone as parent_phone,
+      COALESCE(s.academic_year, c.academic_year) as student_year,
+      COALESCE(s.branch, c.department) as student_branch
     FROM students s
+    JOIN classes c ON s.class_id = c.id
     LEFT JOIN attendance a ON s.id = a.student_id AND a.date = ?
     LEFT JOIN guardians g ON s.id = g.student_id
-    WHERE s.class_id = ?
-    ORDER BY CAST(s.roll_no AS INTEGER)
-  `, [today, classId]);
+    WHERE ${whereConditions.join(' AND ')}
+    ORDER BY 
+      COALESCE(s.academic_year, c.academic_year) DESC,
+      COALESCE(s.branch, c.department),
+      CAST(s.roll_no AS INTEGER)
+  `, queryParams);
 
   res.render('mark-daily-attendance', {
     class: classInfo[0],
     students,
     today,
+    studentYears,
+    studentBranches,
+    selectedYear,
+    selectedBranch,
     pageTitle: `Mark Attendance - ${classInfo[0].name}`
   });
 });
