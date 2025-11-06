@@ -97,6 +97,17 @@ class NotificationScheduler {
 
           if (!recentAlert) {
             await NotificationService.sendLowAttendanceAlert(student, student.attendance_percentage);
+            
+            // Create dashboard alert
+            const AlertService = (await import('./alert-service.js')).default;
+            await AlertService.alertLowAttendance(
+              teacher.id, 
+              student.name, 
+              student.attendance_percentage, 
+              student.class_id, 
+              student.id
+            );
+            
             console.log(`Sent low attendance alert for ${student.name} (${student.attendance_percentage}%)`);
           }
         }

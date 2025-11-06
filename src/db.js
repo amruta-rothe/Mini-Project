@@ -278,6 +278,24 @@ async function migrate() {
     updated_at TEXT DEFAULT (datetime('now')),
     FOREIGN KEY (teacher_id) REFERENCES teachers(id) ON DELETE CASCADE
   );`);
+
+  // Alerts table for dashboard notifications
+  await run(`CREATE TABLE IF NOT EXISTS alerts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    type TEXT NOT NULL CHECK (type IN ('success', 'info', 'warning', 'error', 'system')),
+    title TEXT NOT NULL,
+    message TEXT NOT NULL,
+    teacher_id INTEGER,
+    student_id INTEGER,
+    class_id INTEGER,
+    is_read BOOLEAN DEFAULT 0,
+    read_at TEXT,
+    expires_at TEXT,
+    created_at TEXT NOT NULL,
+    FOREIGN KEY (teacher_id) REFERENCES teachers(id) ON DELETE CASCADE,
+    FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+    FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE
+  );`);
 }
 
 async function seed() {

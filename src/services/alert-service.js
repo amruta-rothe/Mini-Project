@@ -1,238 +1,288 @@
-/**
- * Alert Service for AttendanceMS
- * Manages different types of alerts with severity levels
- */
+import { getDB } from '../db.js';
 
 class AlertService {
   constructor() {
-    this.alerts = [];
+    this.db = getDB();
     this.alertTypes = {
-      SUCCESS: {
-        type: 'success',
-        color: '#28a745',
-        bgColor: 'rgba(40, 167, 69, 0.1)',
-        borderColor: '#28a745',
-        icon: 'fas fa-check-circle',
-        emoji: '✅'
-      },
-      INFO: {
-        type: 'info',
-        color: '#17a2b8',
-        bgColor: 'rgba(23, 162, 184, 0.1)',
-        borderColor: '#17a2b8',
-        icon: 'fas fa-info-circle',
-        emoji: 'ℹ️'
-      },
-      WARNING: {
-        type: 'warning',
-        color: '#ffc107',
-        bgColor: 'rgba(255, 193, 7, 0.1)',
-        borderColor: '#ffc107',
-        icon: 'fas fa-exclamation-triangle',
-        emoji: '⚠️'
-      },
-      ERROR: {
-        type: 'error',
-        color: '#dc3545',
-        bgColor: 'rgba(220, 53, 69, 0.1)',
-        borderColor: '#dc3545',
-        icon: 'fas fa-times-circle',
-        emoji: '❌'
-      },
-      SYSTEM: {
-        type: 'system',
-        color: '#6c757d',
-        bgColor: 'rgba(108, 117, 125, 0.1)',
-        borderColor: '#6c757d',
-        icon: 'fas fa-cog',
-        emoji: '🛠️'
-      }
+      SUCCESS: { color: 'success', icon: 'fas fa-check-circle', priority: 1 },
+      INFO: { color: 'info', icon: 'fas fa-info-circle', priority: 2 },
+      WARNING: { color: 'warning', icon: 'fas fa-exclamation-triangle', priority: 3 },
+      ERROR: { color: 'danger', icon: 'fas fa-times-circle', priority: 4 },
+      SYSTEM: { color: 'secondary', icon: 'fas fa-tools', priority: 5 }
     };
   }
 
-  /**
-   * Add a new alert
-   * @param {string} type - Alert type (SUCCESS, INFO, WARNING, ERROR, SYSTEM)
-   * @param {string} title - Alert title
-   * @param {string} message - Alert message
-   * @param {Object} options - Additional options
-   */
-  addAlert(type, title, message, options = {}) {
-    const alertType = this.alertTypes[type] || this.alertTypes.INFO;
-    
-    const alert = {
-      id: Date.now() + Math.random(),
-      type: alertType.type,
+  // Create a new alert
+  async createAlert(type, title, message, teacherId = null, studentId = null, classId = null, expiresAt = null) {
+    try {
+      if (!this.alertTypes[type]) {
+        throw new Error(`Invalid alert type: ${type}`);
+      }
+
+      const alertData = {
+        type: type.toLowerCase(),
+        title,
+        message,
+        teacher_id: teacherId,
+        student_id: studentId,
+        class_id: classId,
+        expires_at: expiresAt,
+        is_read: 0,
+        created_at: new Date().toISOString()
+      };
+
+      const result = await this.db.run(`
+        INSERT INTO alerts (type, title, message, teacher_id, student_id, class_id, expires_at, is_read, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `, [
+        alertData.type,
+        alertData.title,
+        alertData.message,
+        alertData.teacher_id,
+        alertData.student_id,
+        alertData.class_id,
+        alertData.expires_at,
+        alertData.is_read,
+        alertData.created_at
+      ]);
+
+      return { id: result.lastID, ...alertData };
+    } catch (error) {
+      console.error('Error creating alert:', error);
+      throw error;
+    }
+  }
+
+  // Get alerts for a specific teacher
+  async getAlertsForTeacher(teacherId, limit = 10, includeRead = false) {
+    try {
+      const readCondition = includeRead ? '' : 'AND is_read = 0';
+      
+      const alerts = await this.db.all(`
+        SELECT a.*, 
+               s.name as student_name,
+               c.name as class_name
+        FROM alerts a
+        LEFT JOIN students s ON a.student_id = s.id
+        LEFT JOIN classes c ON a.class_id = c.id
+        WHERE (a.teacher_id = ? OR a.teacher_id IS NULL)
+          AND (a.expires_at IS NULL OR datetime(a.expires_at) > datetime('now'))
+          ${readCondition}
+        ORDER BY 
+          CASE a.type 
+            WHEN 'error' THEN 1
+            WHEN 'warning' THEN 2
+            WHEN 'info' THEN 3
+            WHEN 'success' THEN 4
+            WHEN 'system' THEN 5
+          END,
+          a.created_at DESC
+        LIMIT ?
+      `, [teacherId, limit]);
+
+      return alerts.map(alert => ({
+        ...alert,
+        ...this.alertTypes[alert.type.toUpperCase()],
+        timeAgo: this.getTimeAgo(alert.created_at)
+      }));
+    } catch (error) {
+      console.error('Error getting alerts:', error);
+      return [];
+    }
+  }
+
+  // Get alert counts by type for a teacher
+  async getAlertCounts(teacherId) {
+    try {
+      const counts = await this.db.get(`
+        SELECT 
+          COUNT(CASE WHEN type = 'success' AND is_read = 0 THEN 1 END) as success_count,
+          COUNT(CASE WHEN type = 'info' AND is_read = 0 THEN 1 END) as info_count,
+          COUNT(CASE WHEN type = 'warning' AND is_read = 0 THEN 1 END) as warning_count,
+          COUNT(CASE WHEN type = 'error' AND is_read = 0 THEN 1 END) as error_count,
+          COUNT(CASE WHEN type = 'system' AND is_read = 0 THEN 1 END) as system_count,
+          COUNT(CASE WHEN is_read = 0 THEN 1 END) as total_unread
+        FROM alerts
+        WHERE (teacher_id = ? OR teacher_id IS NULL)
+          AND (expires_at IS NULL OR datetime(expires_at) > datetime('now'))
+      `, [teacherId]);
+
+      return counts || {
+        success_count: 0,
+        info_count: 0,
+        warning_count: 0,
+        error_count: 0,
+        system_count: 0,
+        total_unread: 0
+      };
+    } catch (error) {
+      console.error('Error getting alert counts:', error);
+      return {
+        success_count: 0,
+        info_count: 0,
+        warning_count: 0,
+        error_count: 0,
+        system_count: 0,
+        total_unread: 0
+      };
+    }
+  }
+
+  // Mark alert as read
+  async markAsRead(alertId, teacherId) {
+    try {
+      await this.db.run(`
+        UPDATE alerts 
+        SET is_read = 1, read_at = datetime('now')
+        WHERE id = ? AND (teacher_id = ? OR teacher_id IS NULL)
+      `, [alertId, teacherId]);
+      return true;
+    } catch (error) {
+      console.error('Error marking alert as read:', error);
+      return false;
+    }
+  }
+
+  // Mark all alerts as read for a teacher
+  async markAllAsRead(teacherId) {
+    try {
+      await this.db.run(`
+        UPDATE alerts 
+        SET is_read = 1, read_at = datetime('now')
+        WHERE (teacher_id = ? OR teacher_id IS NULL) AND is_read = 0
+      `, [teacherId]);
+      return true;
+    } catch (error) {
+      console.error('Error marking all alerts as read:', error);
+      return false;
+    }
+  }
+
+  // Delete expired alerts
+  async cleanupExpiredAlerts() {
+    try {
+      const result = await this.db.run(`
+        DELETE FROM alerts 
+        WHERE expires_at IS NOT NULL 
+          AND datetime(expires_at) <= datetime('now')
+      `);
+      console.log(`Cleaned up ${result.changes} expired alerts`);
+      return result.changes;
+    } catch (error) {
+      console.error('Error cleaning up expired alerts:', error);
+      return 0;
+    }
+  }
+
+  // Helper method to calculate time ago
+  getTimeAgo(dateString) {
+    const now = new Date();
+    const alertDate = new Date(dateString);
+    const diffInSeconds = Math.floor((now - alertDate) / 1000);
+
+    if (diffInSeconds < 60) return 'Just now';
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+    if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)}d ago`;
+    return alertDate.toLocaleDateString();
+  }
+
+  // Predefined alert creators for common scenarios
+  async createSuccessAlert(title, message, teacherId, options = {}) {
+    return this.createAlert('SUCCESS', title, message, teacherId, options.studentId, options.classId, options.expiresAt);
+  }
+
+  async createInfoAlert(title, message, teacherId, options = {}) {
+    return this.createAlert('INFO', title, message, teacherId, options.studentId, options.classId, options.expiresAt);
+  }
+
+  async createWarningAlert(title, message, teacherId, options = {}) {
+    return this.createAlert('WARNING', title, message, teacherId, options.studentId, options.classId, options.expiresAt);
+  }
+
+  async createErrorAlert(title, message, teacherId, options = {}) {
+    return this.createAlert('ERROR', title, message, teacherId, options.studentId, options.classId, options.expiresAt);
+  }
+
+  async createSystemAlert(title, message, options = {}) {
+    return this.createAlert('SYSTEM', title, message, null, options.studentId, options.classId, options.expiresAt);
+  }
+
+  // Common alert scenarios
+  async alertAttendanceMarked(teacherId, className, presentCount, totalCount) {
+    return this.createSuccessAlert(
+      'Attendance Marked Successfully',
+      `${className}: ${presentCount}/${totalCount} students present`,
+      teacherId,
+      { expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() } // Expires in 24 hours
+    );
+  }
+
+  async alertLowAttendance(teacherId, studentName, attendancePercentage, classId, studentId) {
+    return this.createWarningAlert(
+      'Low Attendance Detected',
+      `${studentName} has ${attendancePercentage}% attendance`,
+      teacherId,
+      { classId, studentId }
+    );
+  }
+
+  async alertNotificationFailed(teacherId, studentName, errorMessage) {
+    return this.createErrorAlert(
+      'Notification Failed',
+      `Failed to send notification to ${studentName}: ${errorMessage}`,
+      teacherId
+    );
+  }
+
+  async alertSystemMaintenance(message, expiresAt) {
+    return this.createSystemAlert(
+      'System Maintenance',
+      message,
+      { expiresAt }
+    );
+  }
+
+  async alertNewFeature(title, message, expiresAt) {
+    return this.createInfoAlert(
       title,
       message,
-      timestamp: new Date(),
-      isRead: false,
-      isDismissible: options.isDismissible !== false,
-      autoHide: options.autoHide || false,
-      duration: options.duration || 5000,
-      priority: options.priority || 'normal',
-      category: options.category || 'general',
-      actionUrl: options.actionUrl || null,
-      actionText: options.actionText || null,
-      ...alertType
-    };
+      null, // System-wide alert
+      { expiresAt }
+    );
+  }
 
-    this.alerts.unshift(alert);
+  async alertStudentAbsent(teacherId, studentName, date, classId, studentId) {
+    return this.createInfoAlert(
+      'Student Absence',
+      `${studentName} was marked absent on ${date}`,
+      teacherId,
+      { 
+        classId, 
+        studentId,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() // Expires in 7 days
+      }
+    );
+  }
+
+  async alertReportGenerated(teacherId, reportType, className) {
+    return this.createSuccessAlert(
+      'Report Generated',
+      `${reportType} report for ${className} has been generated successfully`,
+      teacherId,
+      { expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() }
+    );
+  }
+
+  async alertBulkImportCompleted(teacherId, successCount, failedCount, className) {
+    const type = failedCount > 0 ? 'WARNING' : 'SUCCESS';
+    const title = failedCount > 0 ? 'Bulk Import Completed with Issues' : 'Bulk Import Successful';
+    const message = `${className}: ${successCount} students imported successfully${failedCount > 0 ? `, ${failedCount} failed` : ''}`;
     
-    // Limit to 50 alerts to prevent memory issues
-    if (this.alerts.length > 50) {
-      this.alerts = this.alerts.slice(0, 50);
-    }
-
-    return alert;
-  }
-
-  /**
-   * Get all alerts
-   */
-  getAllAlerts() {
-    return this.alerts;
-  }
-
-  /**
-   * Get unread alerts
-   */
-  getUnreadAlerts() {
-    return this.alerts.filter(alert => !alert.isRead);
-  }
-
-  /**
-   * Get alerts by type
-   */
-  getAlertsByType(type) {
-    return this.alerts.filter(alert => alert.type === type);
-  }
-
-  /**
-   * Mark alert as read
-   */
-  markAsRead(alertId) {
-    const alert = this.alerts.find(a => a.id === alertId);
-    if (alert) {
-      alert.isRead = true;
-    }
-    return alert;
-  }
-
-  /**
-   * Mark all alerts as read
-   */
-  markAllAsRead() {
-    this.alerts.forEach(alert => {
-      alert.isRead = true;
-    });
-  }
-
-  /**
-   * Dismiss alert
-   */
-  dismissAlert(alertId) {
-    const index = this.alerts.findIndex(a => a.id === alertId);
-    if (index > -1) {
-      return this.alerts.splice(index, 1)[0];
-    }
-    return null;
-  }
-
-  /**
-   * Clear all alerts
-   */
-  clearAllAlerts() {
-    this.alerts = [];
-  }
-
-  /**
-   * Get alert statistics
-   */
-  getStats() {
-    const total = this.alerts.length;
-    const unread = this.getUnreadAlerts().length;
-    const byType = {};
-    
-    Object.keys(this.alertTypes).forEach(type => {
-      byType[type.toLowerCase()] = this.getAlertsByType(type.toLowerCase()).length;
-    });
-
-    return {
-      total,
-      unread,
-      read: total - unread,
-      byType
-    };
-  }
-
-  /**
-   * Generate sample alerts for demonstration
-   */
-  generateSampleAlerts() {
-    // Success alerts
-    this.addAlert('SUCCESS', 'Attendance Marked', 'Successfully marked attendance for Class 10A - 32 students present.', {
-      category: 'attendance',
-      actionUrl: '/attendance/view/123',
-      actionText: 'View Details'
-    });
-
-    this.addAlert('SUCCESS', 'Report Generated', 'Weekly attendance report has been generated and sent to parents.', {
-      category: 'reports',
-      actionUrl: '/reports/weekly/456',
-      actionText: 'Download Report'
-    });
-
-    // Info alerts
-    this.addAlert('INFO', 'New Features Available', 'Check out the new analytics dashboard and improved notification system.', {
-      category: 'features',
-      actionUrl: '/help/release-notes',
-      actionText: 'Learn More'
-    });
-
-    this.addAlert('INFO', 'Parent Meeting Reminder', 'Parent-teacher meeting scheduled for next Friday at 2:00 PM.', {
-      category: 'events',
-      priority: 'high'
-    });
-
-    // Warning alerts
-    this.addAlert('WARNING', 'Low Attendance Alert', 'Class 9B has attendance below 75% this week. Consider follow-up actions.', {
-      category: 'attendance',
-      priority: 'high',
-      actionUrl: '/analytics/class/9b',
-      actionText: 'View Analytics'
-    });
-
-    this.addAlert('WARNING', 'Email Delivery Issues', 'Some parent notification emails are bouncing. Please verify email addresses.', {
-      category: 'notifications',
-      actionUrl: '/settings/notifications',
-      actionText: 'Check Settings'
-    });
-
-    // Error alerts
-    this.addAlert('ERROR', 'CSV Import Failed', 'Failed to import student data from CSV file. Please check the file format.', {
-      category: 'import',
-      actionUrl: '/help/troubleshooting#csv-import',
-      actionText: 'Get Help'
-    });
-
-    // System alerts
-    this.addAlert('SYSTEM', 'Scheduled Maintenance', 'System maintenance scheduled for tonight 11:00 PM - 2:00 AM EST.', {
-      category: 'maintenance',
-      priority: 'high',
-      isDismissible: false
-    });
-
-    this.addAlert('SYSTEM', 'Database Backup Complete', 'Daily database backup completed successfully at 3:00 AM.', {
-      category: 'backup'
-    });
+    return this.createAlert(type, title, message, teacherId, null, null, 
+      new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+    );
   }
 }
 
-// Create singleton instance
-const alertService = new AlertService();
-
-// Generate sample alerts for demonstration
-alertService.generateSampleAlerts();
-
-export default alertService;
+export default new AlertService();

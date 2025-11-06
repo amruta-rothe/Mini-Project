@@ -1,165 +1,130 @@
 import express from 'express';
-import alertService from '../services/alert-service.js';
+import AlertService from '../services/alert-service.js';
 
 const router = express.Router();
 
 function requireAuth(req, res, next) {
-  if (!req.session.user) return res.redirect('/login');
+  if (!req.session.user) return res.status(401).json({ error: 'unauthorized' });
   next();
 }
 
-// Get all alerts
-router.get('/api/alerts', requireAuth, (req, res) => {
+// Get alerts for current teacher
+router.get('/api/alerts', requireAuth, async (req, res) => {
   try {
-    const alerts = alertService.getAllAlerts();
-    const stats = alertService.getStats();
+    const teacherId = req.session.user.id;
+    const limit = parseInt(req.query.limit) || 10;
+    const includeRead = req.query.include_read === 'true';
+    
+    const alerts = await AlertService.getAlertsForTeacher(teacherId, limit, includeRead);
+    const counts = await AlertService.getAlertCounts(teacherId);
     
     res.json({
       success: true,
       alerts,
-      stats
+      counts
     });
   } catch (error) {
     console.error('Error fetching alerts:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to fetch alerts'
-    });
+    res.status(500).json({ error: 'Failed to fetch alerts' });
   }
 });
 
-// Get unread alerts
-router.get('/api/alerts/unread', requireAuth, (req, res) => {
+// Get alert counts only
+router.get('/api/alerts/counts', requireAuth, async (req, res) => {
   try {
-    const alerts = alertService.getUnreadAlerts();
+    const teacherId = req.session.user.id;
+    const counts = await AlertService.getAlertCounts(teacherId);
     
     res.json({
       success: true,
-      alerts,
-      count: alerts.length
+      counts
     });
   } catch (error) {
-    console.error('Error fetching unread alerts:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to fetch unread alerts'
-    });
+    console.error('Error fetching alert counts:', error);
+    res.status(500).json({ error: 'Failed to fetch alert counts' });
   }
 });
 
 // Mark alert as read
-router.post('/api/alerts/:id/read', requireAuth, (req, res) => {
+router.post('/api/alerts/:id/read', requireAuth, async (req, res) => {
   try {
-    const alertId = parseFloat(req.params.id);
-    const alert = alertService.markAsRead(alertId);
+    const alertId = parseInt(req.params.id);
+    const teacherId = req.session.user.id;
     
-    if (alert) {
-      res.json({
-        success: true,
-        alert
-      });
+    const success = await AlertService.markAsRead(alertId, teacherId);
+    
+    if (success) {
+      res.json({ success: true, message: 'Alert marked as read' });
     } else {
-      res.status(404).json({
-        success: false,
-        error: 'Alert not found'
-      });
+      res.status(404).json({ error: 'Alert not found' });
     }
   } catch (error) {
     console.error('Error marking alert as read:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to mark alert as read'
-    });
+    res.status(500).json({ error: 'Failed to mark alert as read' });
   }
 });
 
 // Mark all alerts as read
-router.post('/api/alerts/read-all', requireAuth, (req, res) => {
+router.post('/api/alerts/read-all', requireAuth, async (req, res) => {
   try {
-    alertService.markAllAsRead();
+    const teacherId = req.session.user.id;
     
-    res.json({
-      success: true,
-      message: 'All alerts marked as read'
-    });
+    const success = await AlertService.markAllAsRead(teacherId);
+    
+    if (success) {
+      res.json({ success: true, message: 'All alerts marked as read' });
+    } else {
+      res.status(500).json({ error: 'Failed to mark alerts as read' });
+    }
   } catch (error) {
     console.error('Error marking all alerts as read:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to mark all alerts as read'
-    });
+    res.status(500).json({ error: 'Failed to mark all alerts as read' });
   }
 });
 
-// Dismiss alert
-router.delete('/api/alerts/:id', requireAuth, (req, res) => {
+// Create a test alert (for development/testing)
+router.post('/api/alerts/test', requireAuth, async (req, res) => {
   try {
-    const alertId = parseFloat(req.params.id);
-    const alert = alertService.dismissAlert(alertId);
+    const teacherId = req.session.user.id;
+    const { type, title, message } = req.body;
     
-    if (alert) {
-      res.json({
-        success: true,
-        message: 'Alert dismissed'
-      });
-    } else {
-      res.status(404).json({
-        success: false,
-        error: 'Alert not found'
-      });
-    }
+    const alert = await AlertService.createAlert(
+      type.toUpperCase(),
+      title || 'Test Alert',
+      message || 'This is a test alert',
+      teacherId
+    );
+    
+    res.json({ success: true, alert });
   } catch (error) {
-    console.error('Error dismissing alert:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to dismiss alert'
-    });
+    console.error('Error creating test alert:', error);
+    res.status(500).json({ error: 'Failed to create test alert' });
   }
 });
 
-// Add new alert (for testing/admin use)
-router.post('/api/alerts', requireAuth, (req, res) => {
+// Cleanup expired alerts (admin endpoint)
+router.post('/api/alerts/cleanup', requireAuth, async (req, res) => {
   try {
-    const { type, title, message, options } = req.body;
-    
-    if (!type || !title || !message) {
-      return res.status(400).json({
-        success: false,
-        error: 'Type, title, and message are required'
-      });
-    }
-    
-    const alert = alertService.addAlert(type.toUpperCase(), title, message, options);
-    
-    res.json({
-      success: true,
-      alert
+    const cleanedCount = await AlertService.cleanupExpiredAlerts();
+    res.json({ 
+      success: true, 
+      message: `Cleaned up ${cleanedCount} expired alerts` 
     });
   } catch (error) {
-    console.error('Error adding alert:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to add alert'
-    });
+    console.error('Error cleaning up alerts:', error);
+    res.status(500).json({ error: 'Failed to cleanup alerts' });
   }
 });
 
-// Get alert statistics
-router.get('/api/alerts/stats', requireAuth, (req, res) => {
-  try {
-    const stats = alertService.getStats();
-    
-    res.json({
-      success: true,
-      stats
-    });
-  } catch (error) {
-    console.error('Error fetching alert stats:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to fetch alert statistics'
-    });
-  }
+// Alerts page
+router.get('/alerts', (req, res, next) => {
+  if (!req.session.user) return res.redirect('/login');
+  next();
+}, async (req, res) => {
+  res.render('alerts', {
+    title: 'System Alerts',
+    currentPage: 'alerts'
+  });
 });
 
 export default router;

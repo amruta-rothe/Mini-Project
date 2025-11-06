@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Alerts - Attendance Management System</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #f8f9fa; }
+    .navbar { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .alert-card { 
+      background: white; 
+      border-radius: 12px; 
+      padding: 20px; 
+      box-shadow: 0 3px 10px rgba(0,0,0,0.08); 
+      margin-bottom: 15px;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .alert-card:hover { 
+      transform: translateY(-2px); 
+      box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    }
+    .alert-card.unread {
+      border-left: 5px solid #007bff;
+      background: linear-gradient(90deg, #f8f9ff 0%, white 10%);
+    }
+    .alert-card.unread.alert-error {
+      border-left-color: #dc3545;
+      background: linear-gradient(90deg, #fff5f5 0%, white 10%);
+    }
+    .alert-card.unread.alert-warning {
+      border-left-color: #ffc107;
+      background: linear-gradient(90deg, #fffbf0 0%, white 10%);
+    }
+    .alert-card.unread.alert-success {
+      border-left-color: #28a745;
+      background: linear-gradient(90deg, #f0fff4 0%, white 10%);
+    }
+    .alert-card.unread.alert-info {
+      border-left-color: #17a2b8;
+      background: linear-gradient(90deg, #f0f9ff 0%, white 10%);
+    }
+    .alert-card.unread.alert-system {
+      border-left-color: #6c757d;
+      background: linear-gradient(90deg, #f8f9fa 0%, white 10%);
+    }
+    .header-section {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px 0;
+      margin-bottom: 30px;
+    }
+    .alert-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+    .filter-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/dashboard">
+        <i class="fas fa-graduation-cap me-2"></i>Attendance MS
+      </a>
+      <div class="navbar-nav ms-auto">
+        <div class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            <i class="fas fa-user-circle me-1"></i><%= currentUser.name %>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/profile"><i class="fas fa-user me-2"></i>My Profile</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <form method="post" action="/logout" class="d-inline">
+                <button type="submit" class="dropdown-item"><i class="fas fa-sign-out-alt me-2"></i>Logout</button>
+              </form>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="header-section">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <h1 class="mb-2">
+            <i class="fas fa-bell me-3"></i>System Alerts
+          </h1>
+          <p class="mb-0 opacity-90">Manage and view all system notifications</p>
+        </div>
+        <div class="col-md-4 text-end">
+          <button class="btn btn-warning me-2" onclick="markAllAsRead()">
+            <i class="fas fa-check-double me-2"></i>Mark All Read
+          </button>
+          <a href="/dashboard" class="btn btn-light">
+            <i class="fas fa-arrow-left me-2"></i>Dashboard
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Filter and Stats -->
+    <div class="filter-card">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <h5 class="mb-3">
+            <i class="fas fa-filter me-2"></i>Filter Alerts
+          </h5>
+          <div class="btn-group" role="group">
+            <input type="radio" class="btn-check" name="alertFilter" id="filterAll" value="all" checked>
+            <label class="btn btn-outline-secondary" for="filterAll">
+              All <span class="badge bg-secondary ms-1" id="countAll">0</span>
+            </label>
+            
+            <input type="radio" class="btn-check" name="alertFilter" id="filterError" value="error">
+            <label class="btn btn-outline-danger" for="filterError">
+              <i class="fas fa-times-circle me-1"></i>Error <span class="badge bg-danger ms-1" id="countError">0</span>
+            </label>
+            
+            <input type="radio" class="btn-check" name="alertFilter" id="filterWarning" value="warning">
+            <label class="btn btn-outline-warning" for="filterWarning">
+              <i class="fas fa-exclamation-triangle me-1"></i>Warning <span class="badge bg-warning ms-1" id="countWarning">0</span>
+            </label>
+            
+            <input type="radio" class="btn-check" name="alertFilter" id="filterInfo" value="info">
+            <label class="btn btn-outline-info" for="filterInfo">
+              <i class="fas fa-info-circle me-1"></i>Info <span class="badge bg-info ms-1" id="countInfo">0</span>
+            </label>
+            
+            <input type="radio" class="btn-check" name="alertFilter" id="filterSuccess" value="success">
+            <label class="btn btn-outline-success" for="filterSuccess">
+              <i class="fas fa-check-circle me-1"></i>Success <span class="badge bg-success ms-1" id="countSuccess">0</span>
+            </label>
+            
+            <input type="radio" class="btn-check" name="alertFilter" id="filterSystem" value="system">
+            <label class="btn btn-outline-secondary" for="filterSystem">
+              <i class="fas fa-tools me-1"></i>System <span class="badge bg-secondary ms-1" id="countSystem">0</span>
+            </label>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="row text-center">
+            <div class="col-6">
+              <div class="h4 text-primary mb-1" id="totalAlerts">0</div>
+              <small class="text-muted">Total Alerts</small>
+            </div>
+            <div class="col-6">
+              <div class="h4 text-warning mb-1" id="unreadAlerts">0</div>
+              <small class="text-muted">Unread</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alerts List -->
+    <div id="alertsList">
+      <div class="text-center py-5" id="loadingMessage">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="mt-2">Loading alerts...</div>
+      </div>
+    </div>
+
+    <!-- No Alerts Message -->
+    <div class="text-center py-5" id="noAlertsMessage" style="display: none;">
+      <i class="fas fa-bell-slash fa-4x text-muted mb-3"></i>
+      <h4 class="text-muted">No Alerts Found</h4>
+      <p class="text-muted">You're all caught up! No alerts match the current filter.</p>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    class AlertsPage {
+      constructor() {
+        this.alerts = [];
+        this.currentFilter = 'all';
+        this.init();
+      }
+
+      init() {
+        this.loadAlerts();
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        // Filter buttons
+        document.querySelectorAll('input[name="alertFilter"]').forEach(radio => {
+          radio.addEventListener('change', (e) => {
+            this.currentFilter = e.target.value;
+            this.renderAlerts();
+          });
+        });
+      }
+
+      async loadAlerts() {
+        try {
+          document.getElementById('loadingMessage').style.display = 'block';
+          
+          const response = await fetch('/api/alerts?limit=100&include_read=true');
+          const data = await response.json();
+          
+          if (data.success) {
+            this.alerts = data.alerts;
+            this.updateCounts(data.counts);
+            this.renderAlerts();
+          }
+        } catch (error) {
+          console.error('Error loading alerts:', error);
+          this.showError('Failed to load alerts');
+        } finally {
+          document.getElementById('loadingMessage').style.display = 'none';
+        }
+      }
+
+      updateCounts(counts) {
+        document.getElementById('totalAlerts').textContent = this.alerts.length;
+        document.getElementById('unreadAlerts').textContent = counts.total_unread;
+        
+        document.getElementById('countAll').textContent = this.alerts.length;
+        document.getElementById('countError').textContent = counts.error_count;
+        document.getElementById('countWarning').textContent = counts.warning_count;
+        document.getElementById('countInfo').textContent = counts.info_count;
+        document.getElementById('countSuccess').textContent = counts.success_count;
+        document.getElementById('countSystem').textContent = counts.system_count;
+      }
+
+      renderAlerts() {
+        const container = document.getElementById('alertsList');
+        const noAlertsMessage = document.getElementById('noAlertsMessage');
+        
+        let filteredAlerts = this.alerts;
+        if (this.currentFilter !== 'all') {
+          filteredAlerts = this.alerts.filter(alert => alert.type === this.currentFilter);
+        }
+
+        if (filteredAlerts.length === 0) {
+          container.innerHTML = '';
+          noAlertsMessage.style.display = 'block';
+          return;
+        }
+
+        noAlertsMessage.style.display = 'none';
+        
+        container.innerHTML = filteredAlerts.map(alert => `
+          <div class="alert-card ${alert.is_read ? '' : 'unread'} alert-${alert.type}" 
+               onclick="this.markAsRead(${alert.id})" 
+               data-alert-id="${alert.id}">
+            <div class="row align-items-center">
+              <div class="col-auto">
+                <div class="alert-icon bg-${alert.color} text-white">
+                  <i class="${alert.icon}"></i>
+                </div>
+              </div>
+              <div class="col">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <h6 class="mb-0 fw-bold">${this.escapeHtml(alert.title)}</h6>
+                  <div class="d-flex align-items-center">
+                    ${!alert.is_read ? '<span class="badge bg-primary me-2">New</span>' : ''}
+                    <small class="text-muted">${alert.timeAgo}</small>
+                  </div>
+                </div>
+                <p class="mb-2 text-muted">${this.escapeHtml(alert.message)}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="d-flex gap-3">
+                    ${alert.student_name ? `<small class="text-muted"><i class="fas fa-user me-1"></i>${alert.student_name}</small>` : ''}
+                    ${alert.class_name ? `<small class="text-muted"><i class="fas fa-chalkboard me-1"></i>${alert.class_name}</small>` : ''}
+                  </div>
+                  <div>
+                    <span class="badge bg-${alert.color}">${alert.type.toUpperCase()}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      async markAsRead(alertId) {
+        try {
+          const response = await fetch(`/api/alerts/${alertId}/read`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+          
+          if (response.ok) {
+            // Update local state
+            const alert = this.alerts.find(a => a.id === alertId);
+            if (alert) {
+              alert.is_read = 1;
+            }
+            
+            // Re-render
+            this.loadAlerts();
+          }
+        } catch (error) {
+          console.error('Error marking alert as read:', error);
+        }
+      }
+
+      showError(message) {
+        const container = document.getElementById('alertsList');
+        container.innerHTML = `
+          <div class="alert alert-danger" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            ${message}
+          </div>
+        `;
+      }
+
+      escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+    }
+
+    // Global functions
+    async function markAllAsRead() {
+      try {
+        const response = await fetch('/api/alerts/read-all', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (response.ok) {
+          window.location.reload();
+        }
+      } catch (error) {
+        console.error('Error marking all alerts as read:', error);
+        alert('Failed to mark all alerts as read');
+      }
+    }
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', () => {
+      window.alertsPage = new AlertsPage();
+    });
+  </script>
+</body>
+</html>

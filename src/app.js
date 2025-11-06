@@ -22,6 +22,7 @@ import profileRouter from './routes/profile.js';
 import helpRouter from './routes/help.js';
 import parentReportsRouter from './routes/parent-reports.js';
 import notificationsRouter from './routes/notifications.js';
+import alertsRouter from './routes/alerts.js';
 
 dotenv.config();
 
@@ -87,6 +88,7 @@ app.use('/', profileRouter);
 app.use('/', helpRouter);
 app.use('/', parentReportsRouter);
 app.use('/', notificationsRouter);
+app.use('/', alertsRouter);
 
 app.get('/health', (req, res) => {
   res.status(200).json({ ok: true });
@@ -119,6 +121,12 @@ migrate()
     // Initialize notification scheduler
     const NotificationScheduler = await import('./services/notification-scheduler.js');
     NotificationScheduler.default.init();
+    
+    // Create sample alerts for demonstration (only in development)
+    if (process.env.NODE_ENV !== 'production') {
+      const { createSampleAlerts } = await import('./services/sample-alerts.js');
+      setTimeout(() => createSampleAlerts(), 2000); // Delay to ensure tables are ready
+    }
     
     console.log('Database initialized successfully');
   })

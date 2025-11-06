@@ -95,6 +95,12 @@ class NotificationService {
       const smsMessage = `Dear Parent, ${student.name} was marked absent on ${date}. Please contact the school if this is incorrect. - ${process.env.SCHOOL_NAME || 'School'}`;
       const smsResult = await this.sendSMS(student.parent_phone, smsMessage, student.name);
       messages.push({ type: 'sms', success: smsResult.success, error: smsResult.error });
+      
+      // Create alert for failed SMS
+      if (!smsResult.success) {
+        const AlertService = (await import('./alert-service.js')).default;
+        await AlertService.alertNotificationFailed(student.teacher_id, student.name, `SMS: ${smsResult.error}`);
+      }
     }
 
     // Email notification
@@ -103,6 +109,19 @@ class NotificationService {
       const htmlContent = this.generateAbsenceEmailTemplate(student, date);
       const emailResult = await this.sendEmail(student.parent_email, subject, htmlContent, student.name);
       messages.push({ type: 'email', success: emailResult.success, error: emailResult.error });
+      
+      // Create alert for failed email
+      if (!emailResult.success) {
+        const AlertService = (await import('./alert-service.js')).default;
+        await AlertService.alertNotificationFailed(student.teacher_id, student.name, `Email: ${emailResult.error}`);
+      }
+    }
+
+    // Create success alert if at least one notification was sent
+    const successCount = messages.filter(m => m.success).length;
+    if (successCount > 0) {
+      const AlertService = (await import('./alert-service.js')).default;
+      await AlertService.alertStudentAbsent(student.teacher_id, student.name, date, student.class_id, student.id);
     }
 
     return messages;

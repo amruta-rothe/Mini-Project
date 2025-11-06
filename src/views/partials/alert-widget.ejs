@@ -1,0 +1,363 @@
+<!-- Alert Widget for Dashboard -->
+<div class="alert-widget">
+  <!-- Alert Bell Icon with Badge -->
+  <div class="alert-bell-container position-relative">
+    <button class="btn btn-outline-secondary position-relative" id="alertBellBtn" data-bs-toggle="dropdown" aria-expanded="false">
+      <i class="fas fa-bell"></i>
+      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="alertBadge" style="display: none;">
+        0
+      </span>
+    </button>
+    
+    <!-- Alert Dropdown -->
+    <div class="dropdown-menu dropdown-menu-end alert-dropdown" style="width: 400px; max-height: 500px; overflow-y: auto;">
+      <div class="dropdown-header d-flex justify-content-between align-items-center">
+        <h6 class="mb-0">
+          <i class="fas fa-bell me-2"></i>Alerts
+        </h6>
+        <button class="btn btn-sm btn-outline-primary" id="markAllReadBtn" style="display: none;">
+          Mark All Read
+        </button>
+      </div>
+      
+      <!-- Alert Type Filters -->
+      <div class="px-3 py-2 border-bottom">
+        <div class="btn-group btn-group-sm w-100" role="group">
+          <input type="radio" class="btn-check" name="alertFilter" id="filterAll" value="all" checked>
+          <label class="btn btn-outline-secondary" for="filterAll">All</label>
+          
+          <input type="radio" class="btn-check" name="alertFilter" id="filterError" value="error">
+          <label class="btn btn-outline-danger" for="filterError">
+            <i class="fas fa-times-circle"></i>
+          </label>
+          
+          <input type="radio" class="btn-check" name="alertFilter" id="filterWarning" value="warning">
+          <label class="btn btn-outline-warning" for="filterWarning">
+            <i class="fas fa-exclamation-triangle"></i>
+          </label>
+          
+          <input type="radio" class="btn-check" name="alertFilter" id="filterInfo" value="info">
+          <label class="btn btn-outline-info" for="filterInfo">
+            <i class="fas fa-info-circle"></i>
+          </label>
+          
+          <input type="radio" class="btn-check" name="alertFilter" id="filterSuccess" value="success">
+          <label class="btn btn-outline-success" for="filterSuccess">
+            <i class="fas fa-check-circle"></i>
+          </label>
+        </div>
+      </div>
+      
+      <!-- Alert List -->
+      <div id="alertList" class="alert-list">
+        <div class="text-center py-4 text-muted" id="noAlertsMessage">
+          <i class="fas fa-bell-slash fa-2x mb-2"></i>
+          <div>No alerts</div>
+        </div>
+      </div>
+      
+      <div class="dropdown-divider"></div>
+      <div class="px-3 py-2">
+        <button class="btn btn-sm btn-primary w-100" onclick="window.location.href='/alerts'">
+          <i class="fas fa-list me-2"></i>View All Alerts
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Alert Styles -->
+<style>
+.alert-widget {
+  position: relative;
+}
+
+.alert-dropdown {
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  border: none;
+  border-radius: 12px;
+}
+
+.alert-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.alert-item:hover {
+  background-color: #f8f9fa;
+}
+
+.alert-item:last-child {
+  border-bottom: none;
+}
+
+.alert-item.unread {
+  background-color: #f8f9ff;
+  border-left: 4px solid #007bff;
+}
+
+.alert-item.unread.alert-error {
+  background-color: #fff5f5;
+  border-left-color: #dc3545;
+}
+
+.alert-item.unread.alert-warning {
+  background-color: #fffbf0;
+  border-left-color: #ffc107;
+}
+
+.alert-item.unread.alert-success {
+  background-color: #f0fff4;
+  border-left-color: #28a745;
+}
+
+.alert-item.unread.alert-info {
+  background-color: #f0f9ff;
+  border-left-color: #17a2b8;
+}
+
+.alert-item.unread.alert-system {
+  background-color: #f8f9fa;
+  border-left-color: #6c757d;
+}
+
+.alert-icon {
+  width: 20px;
+  text-align: center;
+}
+
+.alert-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.alert-title {
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 2px;
+  line-height: 1.3;
+}
+
+.alert-message {
+  font-size: 0.8rem;
+  color: #6c757d;
+  line-height: 1.3;
+  margin-bottom: 4px;
+}
+
+.alert-time {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.alert-meta {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+#alertBadge {
+  font-size: 0.7rem;
+  min-width: 18px;
+  height: 18px;
+  line-height: 18px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.1); }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+.alert-bell-container .btn {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.alert-bell-container .btn:hover {
+  background-color: #f8f9fa;
+}
+
+.btn-group-sm .btn {
+  font-size: 0.75rem;
+}
+
+.dropdown-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  border-radius: 12px 12px 0 0;
+}
+</style>
+
+<!-- Alert Widget JavaScript -->
+<script>
+class AlertWidget {
+  constructor() {
+    this.alerts = [];
+    this.currentFilter = 'all';
+    this.init();
+  }
+
+  init() {
+    this.loadAlerts();
+    this.setupEventListeners();
+    
+    // Refresh alerts every 30 seconds
+    setInterval(() => {
+      this.loadAlerts();
+    }, 30000);
+  }
+
+  setupEventListeners() {
+    // Filter buttons
+    document.querySelectorAll('input[name="alertFilter"]').forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        this.currentFilter = e.target.value;
+        this.renderAlerts();
+      });
+    });
+
+    // Mark all as read
+    document.getElementById('markAllReadBtn').addEventListener('click', () => {
+      this.markAllAsRead();
+    });
+
+    // Dropdown toggle
+    document.getElementById('alertBellBtn').addEventListener('click', () => {
+      this.loadAlerts();
+    });
+  }
+
+  async loadAlerts() {
+    try {
+      const response = await fetch('/api/alerts?limit=20');
+      const data = await response.json();
+      
+      if (data.success) {
+        this.alerts = data.alerts;
+        this.updateBadge(data.counts.total_unread);
+        this.renderAlerts();
+        this.updateMarkAllButton(data.counts.total_unread > 0);
+      }
+    } catch (error) {
+      console.error('Error loading alerts:', error);
+    }
+  }
+
+  updateBadge(count) {
+    const badge = document.getElementById('alertBadge');
+    if (count > 0) {
+      badge.textContent = count > 99 ? '99+' : count;
+      badge.style.display = 'block';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+
+  updateMarkAllButton(show) {
+    const btn = document.getElementById('markAllReadBtn');
+    btn.style.display = show ? 'block' : 'none';
+  }
+
+  renderAlerts() {
+    const container = document.getElementById('alertList');
+    const noAlertsMessage = document.getElementById('noAlertsMessage');
+    
+    let filteredAlerts = this.alerts;
+    if (this.currentFilter !== 'all') {
+      filteredAlerts = this.alerts.filter(alert => alert.type === this.currentFilter);
+    }
+
+    if (filteredAlerts.length === 0) {
+      container.innerHTML = '';
+      noAlertsMessage.style.display = 'block';
+      return;
+    }
+
+    noAlertsMessage.style.display = 'none';
+    
+    container.innerHTML = filteredAlerts.map(alert => `
+      <div class="alert-item ${alert.is_read ? '' : 'unread'} alert-${alert.type}" 
+           onclick="alertWidget.markAsRead(${alert.id})" 
+           data-alert-id="${alert.id}">
+        <div class="d-flex align-items-start">
+          <div class="alert-icon me-3 text-${alert.color}">
+            <i class="${alert.icon}"></i>
+          </div>
+          <div class="alert-content">
+            <div class="alert-title">${this.escapeHtml(alert.title)}</div>
+            <div class="alert-message">${this.escapeHtml(alert.message)}</div>
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="alert-time">${alert.timeAgo}</div>
+              ${alert.student_name || alert.class_name ? `
+                <div class="alert-meta">
+                  ${alert.student_name ? `👤 ${alert.student_name}` : ''}
+                  ${alert.class_name ? `📚 ${alert.class_name}` : ''}
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  async markAsRead(alertId) {
+    try {
+      const response = await fetch(`/api/alerts/${alertId}/read`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (response.ok) {
+        // Update local state
+        const alert = this.alerts.find(a => a.id === alertId);
+        if (alert) {
+          alert.is_read = 1;
+        }
+        
+        // Refresh display
+        this.loadAlerts();
+      }
+    } catch (error) {
+      console.error('Error marking alert as read:', error);
+    }
+  }
+
+  async markAllAsRead() {
+    try {
+      const response = await fetch('/api/alerts/read-all', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (response.ok) {
+        this.loadAlerts();
+      }
+    } catch (error) {
+      console.error('Error marking all alerts as read:', error);
+    }
+  }
+
+  escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+}
+
+// Initialize alert widget when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+  window.alertWidget = new AlertWidget();
+});
+</script>
