@@ -8,6 +8,48 @@ function requireAuth(req, res, next) {
   next();
 }
 
+// Class details: sections, periods, and other metadata
+router.get('/api/class/:id/details', requireAuth, async (req, res) => {
+  try {
+    const classId = parseInt(req.params.id, 10);
+    const teacherId = req.session.user.id;
+    
+    // Verify class belongs to teacher
+    const classInfo = await all(`SELECT * FROM classes WHERE id = ? AND teacher_id = ?`, [classId, teacherId]);
+    if (classInfo.length === 0) {
+      return res.status(404).json({ success: false, error: 'Class not found' });
+    }
+    
+    // Get unique sections from students in this class
+    const sections = await all(`
+      SELECT DISTINCT section 
+      FROM students 
+      WHERE class_id = ? AND section IS NOT NULL AND section != ''
+      ORDER BY section
+    `, [classId]);
+    
+    // Get periods (assuming you have a periods table or use default periods)
+    const periods = [
+      { id: 1, name: 'Period 1 (9:00-10:00)' },
+      { id: 2, name: 'Period 2 (10:00-11:00)' },
+      { id: 3, name: 'Period 3 (11:15-12:15)' },
+      { id: 4, name: 'Period 4 (12:15-1:15)' },
+      { id: 5, name: 'Period 5 (2:00-3:00)' },
+      { id: 6, name: 'Period 6 (3:00-4:00)' }
+    ];
+    
+    res.json({
+      success: true,
+      class: classInfo[0],
+      sections: sections.map(s => s.section),
+      periods: periods
+    });
+  } catch (error) {
+    console.error('Error fetching class details:', error);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+
 // Class summary: counts per status in range
 router.get('/api/class/:id/summary', requireAuth, async (req, res) => {
   const classId = parseInt(req.params.id, 10);
